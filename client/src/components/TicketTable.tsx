@@ -34,16 +34,17 @@ export const TicketTable: React.FC<TicketTableProps> = ({
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
-            className="grid grid-cols-[85px_1fr_auto] sm:grid-cols-[95px_1fr_105px_115px_85px_24px] gap-3 sm:gap-4 items-center px-4 sm:px-6 py-4.5 border-b border-line last:border-b-0"
+            className="grid grid-cols-[80px_1fr_auto] sm:grid-cols-[90px_1fr_125px_100px_105px_75px_20px] gap-3 sm:gap-4 items-center px-4 sm:px-6 py-4.5 border-b border-line last:border-b-0"
           >
             <div className="h-6 bg-line/60 rounded-md animate-pulse w-16" />
             <div className="space-y-2">
               <div className="h-4 bg-line/80 rounded animate-pulse w-3/4" />
               <div className="h-3 bg-line/50 rounded animate-pulse w-1/3" />
             </div>
-            <div className="hidden sm:block h-6 bg-line/60 rounded-full animate-pulse w-20" />
-            <div className="h-6 bg-line/60 rounded-full animate-pulse w-22" />
-            <div className="hidden sm:block h-4 bg-line/50 rounded animate-pulse w-14 ml-auto" />
+            <div className="hidden sm:block h-5 bg-line/40 rounded animate-pulse w-20" />
+            <div className="hidden sm:block h-5 bg-line/40 rounded animate-pulse w-16" />
+            <div className="h-6 bg-line/60 rounded-full animate-pulse w-20" />
+            <div className="hidden sm:block h-4 bg-line/50 rounded animate-pulse w-12 ml-auto" />
             <div className="hidden sm:block h-4 bg-line/30 rounded w-4" />
           </div>
         ))}
@@ -84,9 +85,10 @@ export const TicketTable: React.FC<TicketTableProps> = ({
   return (
     <div className="border border-line rounded-2xl overflow-hidden shadow-card bg-card">
       {/* Table Header Bar with Dedicated Columns */}
-      <div className="grid grid-cols-[85px_1fr_auto] sm:grid-cols-[95px_1fr_105px_115px_85px_24px] gap-3 sm:gap-4 items-center px-4 sm:px-6 py-3 text-[11px] font-bold text-ink/50 border-b border-line bg-canvas/80 uppercase tracking-wider select-none">
+      <div className="grid grid-cols-[80px_1fr_auto] sm:grid-cols-[90px_1fr_125px_100px_105px_75px_20px] gap-3 sm:gap-4 items-center px-4 sm:px-6 py-3 text-[11px] font-bold text-ink/50 border-b border-line bg-canvas/80 uppercase tracking-wider select-none">
         <div>Ticket ID</div>
         <div>Subject &amp; Customer</div>
+        <div className="hidden sm:block">Category</div>
         <div className="hidden sm:block">Priority</div>
         <div>Status</div>
         <div className="hidden sm:block text-right">Created</div>
@@ -94,7 +96,7 @@ export const TicketTable: React.FC<TicketTableProps> = ({
       </div>
 
       {/* Table Body */}
-      <div className="divide-y divide-line">
+      <div className="divide-y divide-line/70">
         {tickets.map((ticket) => (
           <TicketRow key={ticket.ticket_id} ticket={ticket} />
         ))}
