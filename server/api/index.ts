@@ -8,7 +8,21 @@ import { errorHandler } from "../src/middleware/error.middleware.js";
 const app = express();
 
 app.use(cors({
-  origin: env.FRONTEND_URL,
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    const cleanFrontend = env.FRONTEND_URL ? env.FRONTEND_URL.replace(/\/$/, '') : '';
+    const cleanOrigin = origin.replace(/\/$/, '');
+    if (
+      !cleanFrontend ||
+      cleanOrigin === cleanFrontend ||
+      cleanOrigin.endsWith('.vercel.app') ||
+      cleanOrigin.includes('localhost') ||
+      cleanOrigin.includes('127.0.0.1')
+    ) {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
   credentials: true,
 }));
 app.use(express.json());
