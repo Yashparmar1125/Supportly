@@ -5,7 +5,7 @@ import { SearchBar } from '../components/SearchBar';
 import { StatusFilter } from '../components/StatusFilter';
 import { TicketTable } from '../components/TicketTable';
 import { useTickets } from '../hooks/useTickets';
-import type { TicketStatus, TicketPriority } from '../types';
+import type { TicketStatus, TicketPriority, TicketCategory } from '../types';
 import {
   Plus,
   Inbox,
@@ -16,6 +16,7 @@ import {
   AlertCircle,
   ArrowDown,
   SlidersHorizontal,
+  Tag,
 } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
@@ -35,6 +36,12 @@ export const DashboardPage: React.FC = () => {
       ? priorityParam
       : 'All';
 
+  const categoryParam = searchParams.get('category') as TicketCategory | null;
+  const category: TicketCategory | 'All' =
+    categoryParam && ['Billing', 'Technical Bug', 'Feature Request', 'Account Access', 'General'].includes(categoryParam)
+      ? categoryParam
+      : 'All';
+
   const search = searchParams.get('search') || '';
   const page = Math.max(1, Number(searchParams.get('page')) || 1);
   const limit = Math.max(5, Math.min(100, Number(searchParams.get('limit')) || 10));
@@ -43,6 +50,7 @@ export const DashboardPage: React.FC = () => {
   const { data, isLoading, isFetching } = useTickets({
     status: status !== 'All' ? status : undefined,
     priority: priority !== 'All' ? priority : undefined,
+    category: category !== 'All' ? category : undefined,
     search: search.trim() || undefined,
     page,
     limit,
@@ -77,6 +85,10 @@ export const DashboardPage: React.FC = () => {
 
   const handlePriorityChange = (newPriority: TicketPriority | 'All') => {
     updateParams({ priority: newPriority });
+  };
+
+  const handleCategoryChange = (newCategory: TicketCategory | 'All') => {
+    updateParams({ category: newCategory });
   };
 
   const handleSearchChange = (newSearch: string) => {
@@ -120,9 +132,18 @@ export const DashboardPage: React.FC = () => {
             <h1 className="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight">
               Support Tickets
             </h1>
-            <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-              {counts.all} Total
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                {counts.all} Total
+              </span>
+              <span
+                className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 text-[11px] font-mono font-medium text-emerald-800 border border-emerald-200/60 shadow-2xs"
+                title="Auto-refreshing every 15 seconds"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse motion-reduce:animate-none" />
+                Live Sync (15s)
+              </span>
+            </div>
           </div>
           <p className="text-xs sm:text-sm text-ink/60 mt-1">
             Manage customer conversations, triage inbound requests, and track issue resolution.
@@ -295,6 +316,24 @@ export const DashboardPage: React.FC = () => {
               <option value="High">High (8h SLA)</option>
               <option value="Medium">Medium (24h SLA)</option>
               <option value="Low">Low (48h SLA)</option>
+            </select>
+          </div>
+
+          {/* Category Filter */}
+          <div className="flex items-center gap-1.5 pl-1 sm:pl-3 sm:border-l border-line text-xs">
+            <Tag className="w-3.5 h-3.5 text-ink/50 shrink-0" />
+            <select
+              value={category}
+              onChange={(e) => handleCategoryChange(e.target.value as any)}
+              className="bg-canvas border border-line rounded-lg px-2.5 py-1 text-xs font-semibold text-ink focus:outline-none focus:border-primary cursor-pointer hover:border-ink/40 transition-colors"
+              aria-label="Filter by category"
+            >
+              <option value="All">All Categories</option>
+              <option value="Billing">Billing & Invoices</option>
+              <option value="Technical Bug">Technical Bugs</option>
+              <option value="Feature Request">Feature Requests</option>
+              <option value="Account Access">Account Access</option>
+              <option value="General">General Inquiries</option>
             </select>
           </div>
         </div>

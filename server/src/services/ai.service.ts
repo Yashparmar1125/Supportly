@@ -18,6 +18,8 @@ export interface TicketSuggestionContext {
   description: string;
   notes?: Array<{
     note_text: string;
+    author_name?: string;
+    is_internal?: boolean;
     created_at?: string;
   }>;
 }
@@ -187,10 +189,14 @@ RULES:
       let userPrompt = `Customer Name: ${ticket.customer_name}\nCustomer Email: ${ticket.customer_email || 'Not provided'}\nTicket Subject: ${ticket.subject}\nCustomer Issue: ${ticket.description}`;
       if (ticket.notes && Array.isArray(ticket.notes) && ticket.notes.length > 0) {
         const notesContext = ticket.notes
-          .slice(-5)
-          .map((n, idx) => `Update ${idx + 1}: ${n.note_text}`)
+          .slice(-6)
+          .map((n, idx) => {
+            const author = n.author_name || 'Agent';
+            const typeLabel = n.is_internal ? '[Internal Note]' : '[Customer Reply]';
+            return `Update ${idx + 1} (${author} ${typeLabel}): ${n.note_text}`;
+          })
           .join('\n');
-        userPrompt += `\n\nRecent Activity & Notes:\n${notesContext}`;
+        userPrompt += `\n\nRecent Activity & Discussion History:\n${notesContext}`;
       }
 
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {

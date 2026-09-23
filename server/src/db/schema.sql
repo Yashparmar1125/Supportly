@@ -27,6 +27,8 @@ CREATE TABLE IF NOT EXISTS notes (
   id SERIAL PRIMARY KEY,
   ticket_id TEXT REFERENCES tickets(ticket_id) ON DELETE CASCADE,
   note_text TEXT NOT NULL,
+  author_name TEXT DEFAULT 'Support Agent' NOT NULL,
+  is_internal BOOLEAN DEFAULT true NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -39,6 +41,8 @@ ALTER TABLE tickets ADD COLUMN IF NOT EXISTS category TEXT CHECK(category IN ('B
 ALTER TABLE tickets ADD COLUMN IF NOT EXISTS sentiment TEXT CHECK(sentiment IN ('Frustrated', 'Neutral', 'Delighted')) DEFAULT 'Neutral' NOT NULL;
 ALTER TABLE tickets ADD COLUMN IF NOT EXISTS channel TEXT CHECK(channel IN ('Web Portal', 'Email', 'API')) DEFAULT 'Web Portal' NOT NULL;
 ALTER TABLE tickets ADD COLUMN IF NOT EXISTS organization TEXT DEFAULT 'Individual' NOT NULL;
+ALTER TABLE notes ADD COLUMN IF NOT EXISTS author_name TEXT DEFAULT 'Support Agent' NOT NULL;
+ALTER TABLE notes ADD COLUMN IF NOT EXISTS is_internal BOOLEAN DEFAULT true NOT NULL;
 
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status);
