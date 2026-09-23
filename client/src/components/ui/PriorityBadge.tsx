@@ -1,6 +1,6 @@
 import React from 'react';
 import type { TicketPriority } from '../../types';
-import { AlertCircle, Flame, Clock, Minus } from 'lucide-react';
+import { AlertCircle, Flame, Clock, ArrowDown } from 'lucide-react';
 
 interface PriorityBadgeProps {
   priority: TicketPriority;
@@ -11,7 +11,7 @@ interface PriorityBadgeProps {
 export const PriorityBadge: React.FC<PriorityBadgeProps> = ({
   priority,
   showSla = false,
-  size = 'sm',
+  size = 'md',
 }) => {
   const configs: Record<
     TicketPriority,
@@ -21,13 +21,15 @@ export const PriorityBadge: React.FC<PriorityBadgeProps> = ({
       styles: string;
       dot: string;
       icon: React.ReactNode;
+      pulse?: boolean;
     }
   > = {
     Urgent: {
       label: 'Urgent',
       sla: 'SLA: 2h',
       styles: 'bg-rose-50 text-rose-700 border-rose-200/80',
-      dot: 'bg-rose-500 animate-ping',
+      dot: 'bg-rose-600',
+      pulse: true,
       icon: <Flame className="w-3 h-3 text-rose-600 shrink-0" />,
     },
     High: {
@@ -35,6 +37,7 @@ export const PriorityBadge: React.FC<PriorityBadgeProps> = ({
       sla: 'SLA: 8h',
       styles: 'bg-amber-50 text-amber-800 border-amber-200/80',
       dot: 'bg-amber-500',
+      pulse: false,
       icon: <AlertCircle className="w-3 h-3 text-amber-600 shrink-0" />,
     },
     Medium: {
@@ -42,6 +45,7 @@ export const PriorityBadge: React.FC<PriorityBadgeProps> = ({
       sla: 'SLA: 24h',
       styles: 'bg-indigo-50/80 text-indigo-700 border-indigo-200/60',
       dot: 'bg-indigo-500',
+      pulse: false,
       icon: <Clock className="w-3 h-3 text-indigo-600 shrink-0" />,
     },
     Low: {
@@ -49,31 +53,29 @@ export const PriorityBadge: React.FC<PriorityBadgeProps> = ({
       sla: 'SLA: 48h',
       styles: 'bg-slate-50 text-slate-600 border-slate-200/80',
       dot: 'bg-slate-400',
-      icon: <Minus className="w-3 h-3 text-slate-500 shrink-0" />,
+      pulse: false,
+      icon: <ArrowDown className="w-3 h-3 text-slate-500 shrink-0" />,
     },
   };
 
   const config = configs[priority] || configs.Medium;
+  const isSm = size === 'sm';
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 font-semibold rounded-full border transition-all ${
+      className={`inline-flex items-center gap-1.5 font-semibold rounded-full border transition-all shrink-0 ${
         config.styles
-      } ${
-        size === 'sm'
-          ? 'px-2 py-0.5 text-[10px]'
-          : 'px-2.5 py-1 text-xs'
-      }`}
+      } ${isSm ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs'}`}
     >
-      <span className="relative flex h-1.5 w-1.5">
-        {priority === 'Urgent' && (
-          <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${config.dot}`} />
+      <span className="relative flex h-2 w-2 shrink-0">
+        {config.pulse && (
+          <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${config.dot}`} />
         )}
-        <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${priority === 'Urgent' ? 'bg-rose-600' : config.dot}`} />
+        <span className={`relative inline-flex rounded-full h-2 w-2 ${config.dot}`} />
       </span>
       <span>{config.label}</span>
       {showSla && (
-        <span className="opacity-60 font-mono text-[9px] border-l border-current/20 pl-1">
+        <span className="opacity-60 font-mono text-[10px] border-l border-current/20 pl-1.5 ml-0.5">
           {config.sla}
         </span>
       )}

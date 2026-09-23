@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-09-24
+
+### Fixed
+- **Table Column Alignment**: Replaced erratic inline subject badges with dedicated vertical grid columns for `PRIORITY` and `STATUS`, preventing layout bouncing across varying subject lengths.
+- **Badge Sizing & Harmonization**: Standardized `PriorityBadge` and `StatusBadge` to identical height (`h-6`), padding (`px-2.5 py-1`), font metrics (`text-xs font-semibold`), and rounded-full shape. Standardized secondary metadata tags (`Organization` and `Category`) to consistent `h-5` rounded-md tags.
+- **Emoji Removal & Icon Standardization**: Completely removed unicode emojis (`🔥`, `⚠️`, `⏱️`, `💤`) from the dashboard priority filter and ticket detail triage overrides, replacing them with crisp Lucide vector icons (`Flame`, `AlertCircle`, `Clock`, `ArrowDown`, `Building2`, `CreditCard`, `Bug`, `Sparkles`, `KeyRound`, `FileText`).
+
 ---
 
 ## [1.1.0] - 2026-09-24

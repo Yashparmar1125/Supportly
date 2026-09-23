@@ -34,16 +34,17 @@ export const TicketTable: React.FC<TicketTableProps> = ({
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
-            className="grid grid-cols-[100px_1fr_120px_110px_32px] gap-4 items-center px-6 py-4.5 border-b border-line last:border-b-0"
+            className="grid grid-cols-[85px_1fr_auto] sm:grid-cols-[95px_1fr_105px_115px_85px_24px] gap-3 sm:gap-4 items-center px-4 sm:px-6 py-4.5 border-b border-line last:border-b-0"
           >
-            <div className="h-6 bg-line/60 rounded-md animate-pulse w-20" />
+            <div className="h-6 bg-line/60 rounded-md animate-pulse w-16" />
             <div className="space-y-2">
               <div className="h-4 bg-line/80 rounded animate-pulse w-3/4" />
               <div className="h-3 bg-line/50 rounded animate-pulse w-1/3" />
             </div>
-            <div className="h-6 bg-line/60 rounded-full animate-pulse w-24" />
-            <div className="h-4 bg-line/50 rounded animate-pulse w-16 ml-auto" />
-            <div className="h-4 bg-line/30 rounded w-4" />
+            <div className="hidden sm:block h-6 bg-line/60 rounded-full animate-pulse w-20" />
+            <div className="h-6 bg-line/60 rounded-full animate-pulse w-22" />
+            <div className="hidden sm:block h-4 bg-line/50 rounded animate-pulse w-14 ml-auto" />
+            <div className="hidden sm:block h-4 bg-line/30 rounded w-4" />
           </div>
         ))}
       </div>
@@ -82,10 +83,11 @@ export const TicketTable: React.FC<TicketTableProps> = ({
 
   return (
     <div className="border border-line rounded-2xl overflow-hidden shadow-card bg-card">
-      {/* Table Header Bar */}
-      <div className="grid grid-cols-[90px_1fr_auto_70px] sm:grid-cols-[100px_1fr_120px_110px_32px] gap-3 sm:gap-4 items-center px-4 sm:px-6 py-3 text-[11px] font-bold text-ink/50 border-b border-line bg-canvas/80 uppercase tracking-wider select-none">
+      {/* Table Header Bar with Dedicated Columns */}
+      <div className="grid grid-cols-[85px_1fr_auto] sm:grid-cols-[95px_1fr_105px_115px_85px_24px] gap-3 sm:gap-4 items-center px-4 sm:px-6 py-3 text-[11px] font-bold text-ink/50 border-b border-line bg-canvas/80 uppercase tracking-wider select-none">
         <div>Ticket ID</div>
         <div>Subject &amp; Customer</div>
+        <div className="hidden sm:block">Priority</div>
         <div>Status</div>
         <div className="hidden sm:block text-right">Created</div>
         <div className="hidden sm:block" />

@@ -25,6 +25,11 @@ import {
   Frown,
   Meh,
   Cpu,
+  Building2,
+  CreditCard,
+  Bug,
+  KeyRound,
+  FileText,
 } from 'lucide-react';
 
 export const TicketDetailPage: React.FC = () => {
@@ -130,6 +135,22 @@ export const TicketDetailPage: React.FC = () => {
       case 'Web Portal':
       default:
         return <Globe className="w-3.5 h-3.5 text-indigo-500" />;
+    }
+  };
+
+  const getCategoryIcon = (category?: string) => {
+    switch (category) {
+      case 'Billing':
+        return <CreditCard className="w-3.5 h-3.5 text-emerald-600 shrink-0" />;
+      case 'Technical Bug':
+        return <Bug className="w-3.5 h-3.5 text-rose-600 shrink-0" />;
+      case 'Feature Request':
+        return <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />;
+      case 'Account Access':
+        return <KeyRound className="w-3.5 h-3.5 text-indigo-600 shrink-0" />;
+      case 'General':
+      default:
+        return <FileText className="w-3.5 h-3.5 text-slate-500 shrink-0" />;
     }
   };
 
@@ -315,8 +336,9 @@ export const TicketDetailPage: React.FC = () => {
             <div className="space-y-3 text-xs">
               <div className="flex items-center justify-between py-1">
                 <span className="text-ink/60">Category</span>
-                <span className="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">
-                  {ticket.category || 'General'}
+                <span className="inline-flex items-center gap-1.5 font-bold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
+                  {getCategoryIcon(ticket.category)}
+                  <span>{ticket.category || 'General'}</span>
                 </span>
               </div>
 
@@ -338,8 +360,9 @@ export const TicketDetailPage: React.FC = () => {
 
               <div className="flex items-center justify-between py-1 border-t border-line/60">
                 <span className="text-ink/60">Client Account</span>
-                <span className="font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md border border-primary/20">
-                  {ticket.organization || 'Individual'}
+                <span className="inline-flex items-center gap-1.5 font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-md border border-primary/20">
+                  <Building2 className="w-3.5 h-3.5 text-primary shrink-0" />
+                  <span>{ticket.organization || 'Individual'}</span>
                 </span>
               </div>
             </div>
@@ -367,10 +390,10 @@ export const TicketDetailPage: React.FC = () => {
               value={ticket.priority || 'Medium'}
               onChange={(e) => handlePriorityChange(e.target.value as TicketPriority)}
               options={[
-                { label: '🔥 Urgent (2 Hours SLA)', value: 'Urgent' },
-                { label: '⚠️ High (8 Hours SLA)', value: 'High' },
-                { label: '⏱️ Medium (24 Hours SLA)', value: 'Medium' },
-                { label: '💤 Low (48 Hours SLA)', value: 'Low' },
+                { label: 'Urgent (2 Hours SLA)', value: 'Urgent' },
+                { label: 'High (8 Hours SLA)', value: 'High' },
+                { label: 'Medium (24 Hours SLA)', value: 'Medium' },
+                { label: 'Low (48 Hours SLA)', value: 'Low' },
               ]}
             />
 

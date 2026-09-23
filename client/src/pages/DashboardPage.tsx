@@ -13,6 +13,9 @@ import {
   CheckCircle2,
   ExternalLink,
   Flame,
+  AlertCircle,
+  ArrowDown,
+  SlidersHorizontal,
 } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
@@ -107,6 +110,22 @@ export const DashboardPage: React.FC = () => {
 
   const handleClearFilters = () => {
     setSearchParams({}, { replace: true });
+  };
+
+  const getPriorityFilterIcon = (p: TicketPriority | 'All') => {
+    switch (p) {
+      case 'Urgent':
+        return <Flame className="w-3.5 h-3.5 text-rose-600 shrink-0" />;
+      case 'High':
+        return <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />;
+      case 'Medium':
+        return <Clock className="w-3.5 h-3.5 text-indigo-600 shrink-0" />;
+      case 'Low':
+        return <ArrowDown className="w-3.5 h-3.5 text-slate-500 shrink-0" />;
+      case 'All':
+      default:
+        return <SlidersHorizontal className="w-3.5 h-3.5 text-ink/50 shrink-0" />;
+    }
   };
 
   return (
@@ -241,7 +260,7 @@ export const DashboardPage: React.FC = () => {
 
           {/* Priority SLA Filter */}
           <div className="flex items-center gap-1.5 pl-1 sm:pl-3 sm:border-l border-line text-xs">
-            <Flame className="w-3.5 h-3.5 text-rose-500" />
+            {getPriorityFilterIcon(priority)}
             <select
               value={priority}
               onChange={(e) => handlePriorityChange(e.target.value as any)}
@@ -249,10 +268,10 @@ export const DashboardPage: React.FC = () => {
               aria-label="Filter by priority SLA"
             >
               <option value="All">All Priorities</option>
-              <option value="Urgent">🔥 Urgent (2h SLA)</option>
-              <option value="High">⚠️ High (8h SLA)</option>
-              <option value="Medium">⏱️ Medium (24h SLA)</option>
-              <option value="Low">💤 Low (48h SLA)</option>
+              <option value="Urgent">Urgent (2h SLA)</option>
+              <option value="High">High (8h SLA)</option>
+              <option value="Medium">Medium (24h SLA)</option>
+              <option value="Low">Low (48h SLA)</option>
             </select>
           </div>
         </div>
