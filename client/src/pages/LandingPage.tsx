@@ -1,5 +1,6 @@
 import React from 'react';
 import { Hero } from '../components/landing/Hero';
+import { MetricsStrip } from '../components/landing/MetricsStrip';
 import { Features } from '../components/landing/Features';
 import { HowItWorks } from '../components/landing/HowItWorks';
 import { Testimonials } from '../components/landing/Testimonials';
@@ -7,31 +8,53 @@ import { CtaBanner } from '../components/landing/CtaBanner';
 import { Footer } from '../components/landing/Footer';
 import { Logo } from '../components/ui/Logo';
 import { Link } from 'react-router';
+import { User as UserIcon } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-canvas flex flex-col font-sans">
-      {/* Top Floating Navbar */}
-      <nav className="absolute top-0 w-full z-50 border-b border-white/10 bg-ink/40 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-4 h-20 flex items-center justify-between">
-          <Logo light />
-          <div className="flex items-center gap-6">
-            <a href="#features" className="text-white/80 hover:text-white text-sm font-medium transition-colors hidden sm:block">
-              Features
-            </a>
+      {/* Sticky High-End Top Navigation Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-xl border-b border-line shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+        <div className="h-20 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6">
+          <div className="flex items-center gap-10">
+            <Logo />
+            <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-ink/75">
+              <a href="#features" className="hover:text-primary transition-colors">Features</a>
+              <a href="#features" className="hover:text-primary transition-colors">Solutions</a>
+              <a href="#features" className="hover:text-primary transition-colors">Integrations</a>
+              <a href="#how-it-works" className="hover:text-primary transition-colors">Pricing</a>
+              <a href="#features" className="hover:text-primary transition-colors">Resources</a>
+            </nav>
+          </div>
+
+          <div className="flex items-center gap-3.5">
             <Link
               to="/login"
-              className="text-white font-semibold text-sm hover:bg-white/15 px-4 py-2 rounded-md transition-all border border-white/20"
+              className="hidden sm:inline-flex items-center text-sm font-semibold text-ink/75 hover:text-primary px-3 py-1.5 transition-colors"
             >
-              Sign In
+              Sign in
+            </Link>
+            <Link
+              to="/login"
+              className="inline-flex items-center justify-center text-sm font-bold text-white bg-primary hover:bg-primary-deep px-5 py-2.5 rounded-full shadow-[0_4px_14px_rgba(91,80,238,0.35)] transition-all hover:-translate-y-0.5 cursor-pointer"
+            >
+              Start Free Trial
+            </Link>
+            <Link
+              to="/login"
+              className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
+              title="Agent Login"
+            >
+              <UserIcon className="w-4 h-4" />
             </Link>
           </div>
         </div>
-      </nav>
+      </header>
 
-      {/* Main Sections */}
-      <main className="flex-1">
+      {/* Main Stitch Page Sections */}
+      <main className="flex-1 w-full pt-20">
         <Hero />
+        <MetricsStrip />
         <Features />
         <HowItWorks />
         <Testimonials />
