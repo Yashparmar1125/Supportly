@@ -6,28 +6,28 @@ export const Testimonials: React.FC = () => {
     {
       stars: 5,
       quote:
-        'Supportly cut our initial response time from 38 minutes to 45 seconds. The automated triage accurately routes technical queries to our engineering on-call without annoying false alarms.',
-      author: 'Sarah Jenkins',
-      role: 'Head of Support at Hyperflow',
-      initials: 'SJ',
+        'Supportly reduced our turnaround time from 40 minutes to under 2 minutes during peak GST reconciliation cycles. The automated triage accurately routes technical queries to our engineering on-call without noisy false alarms.',
+      author: 'Aditya Vikram',
+      role: 'Head of Customer Experience at KredX India',
+      initials: 'AV',
       avatarBg: 'bg-indigo-100 text-primary',
     },
     {
       stars: 5,
       quote:
-        'We evaluated Zendesk and Intercom before settling on Supportly. The speed, keyboard-first shortcuts, and precision AI drafting made it the easiest purchase decision we made this quarter.',
-      author: 'Mike Thomsen',
-      role: 'Founding Engineer at SyncPoint',
-      initials: 'MT',
+        'We evaluated Freshdesk and Zendesk before switching to Supportly. The keyboard shortcuts, lightning search across 50,000+ customer records, and contextual AI drafting made it the highest-ROI tool we deployed this year.',
+      author: 'Tanvi Kulkarni',
+      role: 'VP of Customer Operations at QuickSend (Bengaluru)',
+      initials: 'TK',
       avatarBg: 'bg-purple-100 text-purple-700',
     },
     {
       stars: 5,
       quote:
-        'Our CSAT jumped from 91% to 99.4% in just two months. Customers repeatedly mention how fast and tailored our support feels now. It literally paid for itself within 20 days.',
-      author: 'Elena Rostova',
-      role: 'Customer Success Lead at CloudCraft',
-      initials: 'ER',
+        'Our CSAT jumped from 89% to 99.2% within 3 weeks of rolling out Supportly across our Bengaluru and Pune teams. Our agents love the response copilot—it feels genuinely tailored to high-growth Indian tech platforms.',
+      author: 'Raghavendra Rao',
+      role: 'Director of Customer Engineering at CashFlow Neo',
+      initials: 'RR',
       avatarBg: 'bg-emerald-100 text-emerald-800',
     },
   ];
@@ -40,10 +40,10 @@ export const Testimonials: React.FC = () => {
             TESTIMONIALS
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-ink tracking-tight mb-3">
-            Loved by modern support teams
+            Loved by modern support teams in India
           </h2>
           <p className="text-base sm:text-lg text-ink/70">
-            See how world-class companies accelerate support resolution without burning out their engineers or agents.
+            See how high-velocity product teams across Bengaluru, Mumbai, and Gurgaon accelerate support resolution with Supportly.
           </p>
         </div>
 

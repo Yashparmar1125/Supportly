@@ -19,30 +19,20 @@ export const LandingPage: React.FC = () => {
           <div className="flex items-center gap-10">
             <Logo />
             <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-ink/75">
-              <a href="#features" className="hover:text-primary transition-colors">Features</a>
-              <a href="#features" className="hover:text-primary transition-colors">Solutions</a>
-              <a href="#features" className="hover:text-primary transition-colors">Integrations</a>
-              <a href="#how-it-works" className="hover:text-primary transition-colors">Pricing</a>
-              <a href="#features" className="hover:text-primary transition-colors">Resources</a>
+              <a href="#features" className="hover:text-primary transition-colors font-semibold">Features</a>
             </nav>
           </div>
 
-          <div className="flex items-center gap-3.5">
+          <div className="flex items-center gap-3">
             <Link
               to="/login"
-              className="hidden sm:inline-flex items-center text-sm font-semibold text-ink/75 hover:text-primary px-3 py-1.5 transition-colors"
+              className="inline-flex items-center text-sm font-semibold text-ink/80 hover:text-primary px-3 py-1.5 transition-colors"
             >
               Sign in
             </Link>
             <Link
               to="/login"
-              className="inline-flex items-center justify-center text-sm font-bold text-white bg-primary hover:bg-primary-deep px-5 py-2.5 rounded-full shadow-[0_4px_14px_rgba(91,80,238,0.35)] transition-all hover:-translate-y-0.5 cursor-pointer"
-            >
-              Start Free Trial
-            </Link>
-            <Link
-              to="/login"
-              className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
+              className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
               title="Agent Login"
             >
               <UserIcon className="w-4 h-4" />
