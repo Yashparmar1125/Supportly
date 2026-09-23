@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Supportly — Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#1A1A2E; --canvas:#FAFAFC; --primary:#5B4FE5; --primary-deep:#3D33B0;
+    --line:#E7E7F2; --card:#FFFFFF;
+    --status-open:#5B4FE5; --status-progress:#E5A33D; --status-closed:#3DBE7A;
+    box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--canvas); color:var(--ink); font-family:'Manrope',-apple-system,sans-serif; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width: 1000px; margin:0 auto; padding: 0 28px 100px; }
+  header { padding: 48px 0 8px; }
+  .logo { font-weight:800; font-size:24px; letter-spacing:-0.02em; }
+  .logo .dot { color:var(--primary); }
+  header p { opacity:0.6; font-size:15px; margin: 6px 0 0; }
+
+  section { padding: 52px 0; border-top:1px solid var(--line); }
+  section h2 { font-size:13px; font-weight:700; letter-spacing:0.03em; opacity:0.45; margin:0 0 28px; text-transform:none; }
+  section h3 { font-size:15px; font-weight:700; margin: 0 0 14px; }
+  .block { margin-bottom: 40px; }
+  .block:last-child { margin-bottom: 0; }
+
+  /* colors */
+  .swatches { display:grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap:16px; }
+  .swatch { border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--card); }
+  .swatch .fill { height:60px; }
+  .swatch .meta { padding:10px 12px; }
+  .swatch .name { font-weight:700; font-size:13px; }
+  .swatch .hex { font-family:'JetBrains Mono',monospace; font-size:11.5px; opacity:0.5; }
+
+  /* type */
+  .type-row { display:flex; align-items:baseline; gap:24px; padding:16px 0; border-bottom:1px solid var(--line); }
+  .type-row:last-child { border-bottom:none; }
+  .type-label { width:100px; flex-shrink:0; font-family:'JetBrains Mono',monospace; font-size:11.5px; opacity:0.5; }
+  .mono-chip { font-family:'JetBrains Mono',monospace; font-size:13px; background:var(--line); border-radius:6px; padding:8px 12px; display:inline-block; }
+
+  /* spacing */
+  .space-row { display:flex; align-items:center; gap:16px; padding:10px 0; }
+  .space-bar { background:var(--primary); height:14px; border-radius:3px; }
+  .space-label { font-family:'JetBrains Mono',monospace; font-size:12px; opacity:0.55; width:70px; }
+
+  /* radius/elevation */
+  .re-grid { display:flex; gap:20px; flex-wrap:wrap; }
+  .re-box { width:100px; height:70px; background:var(--card); border:1px solid var(--line); display:flex; align-items:end; justify-content:center; padding-bottom:8px; font-size:11px; opacity:0.55; font-family:'JetBrains Mono',monospace; }
+
+  /* buttons */
+  .btn { font-family:inherit; font-weight:700; font-size:14px; border-radius:8px; padding:11px 20px; cursor:pointer; border:none; }
+  .btn-primary { background:var(--primary); color:#fff; }
+  .btn-ghost { background:none; border:1px solid var(--line); color:var(--ink); }
+  .btn-sm { padding:7px 14px; font-size:12.5px; border-radius:6px; }
+  .row-gap { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+
+  /* status badges */
+  .badge { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; }
+  .b-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+
+  /* input */
+  .field { max-width:320px; }
+  .field label { display:block; font-size:12.5px; font-weight:700; opacity:0.6; margin-bottom:6px; }
+  .field input { width:100%; font-family:inherit; font-size:14px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--card); color:var(--ink); }
+  .field input:focus { outline:2px solid var(--primary); outline-offset:1px; }
+
+  /* ticket list */
+  .mock-frame { border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow: 0 24px 60px -24px rgba(26,26,46,0.22); background:var(--card); max-width: 560px; }
+  .mock-chrome { display:flex; gap:6px; padding:10px 14px; border-bottom:1px solid var(--line); }
+  .mock-chrome span { width:8px; height:8px; border-radius:50%; background:var(--line); }
+  .t-head, .t-row { display:grid; grid-template-columns: 74px 1fr 100px 64px; gap:10px; align-items:center; }
+  .t-head { padding:8px 14px; font-size:11px; font-weight:700; opacity:0.45; border-bottom:1px solid var(--line); }
+  .t-row { padding:12px 14px; font-size:13px; border-bottom:1px solid var(--line); }
+  .t-row:last-child { border-bottom:none; }
+  .t-id { font-family:'JetBrains Mono',monospace; font-size:11px; opacity:0.55; }
+  .date { opacity:0.5; font-size:12px; }
+
+  /* logo */
+  .logo-grid { display:flex; gap:28px; flex-wrap:wrap; }
+  .logo-card { border:1px solid var(--line); border-radius:10px; padding:26px 32px; background:var(--card); text-align:center; }
+  .logo-lg { font-weight:800; font-size:30px; letter-spacing:-0.02em; }
+  .dot-open .dot { color:var(--status-open); }
+  .dot-progress .dot { color:var(--status-progress); }
+  .dot-closed .dot { color:var(--status-closed); }
+  .logo-caption { font-size:11.5px; opacity:0.5; margin-top:10px; }
+  .favicon { width:38px; height:38px; border-radius:9px; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; }
+
+  @media (max-width: 560px) {
+    .t-head, .t-row { grid-template-columns: 60px 1fr 70px; }
+    .t-head span:nth-child(3), .t-row .date { display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">supportly<span class="dot">.</span></div>
+    <p>Design system — foundations and components, light mode</p>
+  </header>
+
+  <section>
+    <h2>COLOR</h2>
+    <div class="swatches">
+      <div class="swatch"><div class="fill" style="background:var(--ink)"></div><div class="meta"><div class="name">Ink</div><div class="hex">#1A1A2E</div></div></div>
+      <div class="swatch"><div class="fill" style="background:var(--canvas); border-bottom:1px solid var(--line)"></div><div class="meta"><div class="name">Canvas</div><div class="hex">#FAFAFC</div></div></div>
+      <div class="swatch"><div class="fill" style="background:var(--card); border-bottom:1px solid var(--line)"></div><div class="meta"><div class="name">Card</div><div class="hex">#FFFFFF</div></div></div>
+      <div class="swatch"><div class="fill" style="background:var(--primary)"></div><div class="meta"><div class="name">Primary</div><div class="hex">#5B4FE5</div></div></div>
+      <div class="swatch"><div class="fill" style="background:var(--primary-deep)"></div><div class="meta"><div class="name">Primary Deep</div><div class="hex">#3D33B0</div></div></div>
+      <div class="swatch"><div class="fill" style="background:var(--line)"></div><div class="meta"><div class="name">Line</div><div class="hex">#E7E7F2</div></div></div>
+      <div class="swatch"><div class="fill" style="background:var(--status-progress)"></div><div class="meta"><div class="name">In Progress</div><div class="hex">#E5A33D</div></div></div>
+      <div class="swatch"><div class="fill" style="background:var(--status-closed)"></div><div class="meta"><div class="name">Closed</div><div class="hex">#3DBE7A</div></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>TYPOGRAPHY — Manrope</h2>
+    <div class="type-row"><div class="type-label">800 / 52px</div><div style="font-weight:800; font-size:40px; letter-spacing:-0.02em;">Ticket resolved</div></div>
+    <div class="type-row"><div class="type-label">700 / 22px</div><div style="font-weight:700; font-size:22px;">Support tickets</div></div>
+    <div class="type-row"><div class="type-label">500 / 16px</div><div style="font-weight:500; font-size:16px;">Rina Shah reported a payment issue</div></div>
+    <div class="type-row"><div class="type-label">400 / 14px</div><div style="font-size:14px; opacity:0.75; max-width:420px;">Customer says the renewal charge failed twice, asking for a fix before the next billing cycle.</div></div>
+    <div class="type-row"><div class="type-label">Mono / IDs</div><div class="row-gap"><span class="mono-chip">TKT-014</span><span class="mono-chip">2026-09-23 14:02</span></div></div>
+  </section>
+
+  <section>
+    <h2>SPACING SCALE</h2>
+    <div class="space-row"><div class="space-label">4px</div><div class="space-bar" style="width:4px"></div></div>
+    <div class="space-row"><div class="space-label">8px</div><div class="space-bar" style="width:8px"></div></div>
+    <div class="space-row"><div class="space-label">12px</div><div class="space-bar" style="width:12px"></div></div>
+    <div class="space-row"><div class="space-label">16px</div><div class="space-bar" style="width:16px"></div></div>
+    <div class="space-row"><div class="space-label">24px</div><div class="space-bar" style="width:24px"></div></div>
+    <div class="space-row"><div class="space-label">32px</div><div class="space-bar" style="width:32px"></div></div>
+    <div class="space-row"><div class="space-label">48px</div><div class="space-bar" style="width:48px"></div></div>
+  </section>
+
+  <section>
+    <h2>RADIUS &amp; ELEVATION</h2>
+    <div class="re-grid">
+      <div class="re-box" style="border-radius:6px;">6px</div>
+      <div class="re-box" style="border-radius:8px;">8px</div>
+      <div class="re-box" style="border-radius:10px;">10px</div>
+      <div class="re-box" style="border-radius:14px; box-shadow:0 16px 32px -16px rgba(26,26,46,0.25);">shadow-lg</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>COMPONENTS</h2>
+
+    <div class="block">
+      <h3>Buttons</h3>
+      <div class="row-gap">
+        <button class="btn btn-primary">Start free</button>
+        <button class="btn btn-ghost">See how it works</button>
+        <button class="btn btn-primary btn-sm">+ New ticket</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Status badges</h3>
+      <div class="row-gap">
+        <span class="badge"><span class="b-dot" style="background:var(--status-open)"></span>Open</span>
+        <span class="badge"><span class="b-dot" style="background:var(--status-progress)"></span>In Progress</span>
+        <span class="badge"><span class="b-dot" style="background:var(--status-closed)"></span>Closed</span>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Input field</h3>
+      <div class="field">
+        <label>Customer email</label>
+        <input type="text" placeholder="rina@example.com">
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Ticket list</h3>
+      <div class="mock-frame">
+        <div class="mock-chrome"><span></span><span></span><span></span></div>
+        <div class="t-head"><span>ID</span><span>Subject</span><span>Status</span><span>Date</span></div>
+        <div class="t-row"><span class="t-id">TKT-014</span><span>Payment failed on renewal</span><span class="badge"><span class="b-dot" style="background:var(--status-open)"></span>Open</span><span class="date">Sep 23</span></div>
+        <div class="t-row"><span class="t-id">TKT-013</span><span>Can't reset password</span><span class="badge"><span class="b-dot" style="background:var(--status-progress)"></span>In Progress</span><span class="date">Sep 22</span></div>
+        <div class="t-row"><span class="t-id">TKT-012</span><span>Refund request</span><span class="badge"><span class="b-dot" style="background:var(--status-closed)"></span>Closed</span><span class="date">Sep 20</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>LOGO</h2>
+    <div class="logo-grid">
+      <div class="logo-card"><div class="logo-lg dot-open">supportly<span class="dot">.</span></div><div class="logo-caption">Default</div></div>
+      <div class="logo-card"><div class="logo-lg dot-progress">supportly<span class="dot">.</span></div><div class="logo-caption">In progress tint</div></div>
+      <div class="logo-card"><div class="logo-lg dot-closed">supportly<span class="dot">.</span></div><div class="logo-caption">Closed tint</div></div>
+      <div class="logo-card"><div class="favicon" style="margin:0 auto;">s</div><div class="logo-caption">Favicon</div></div>
+    </div>
+  </section>
+</div>
+</body>
+</html>
