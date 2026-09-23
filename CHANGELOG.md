@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **LLM Network Timeout Safeguard**: Added `AbortSignal.timeout(8000)` to OpenRouter requests in `aiService` to prevent process threads from hanging indefinitely.
 - **Note-Only Update Reliability**: Fixed ticket update logic so note-only submissions reliably refresh `updated_at` and verify ticket existence.
 - **Keyboard & WCAG Accessibility**: Made ticket table rows and KPI cards fully keyboard-accessible with `tabIndex={0}`, `role="button"`, and `Enter`/`Space` handlers.
+- **Generalized Dynamic Organization Resolution**: Eliminated hardcoded company brands from the codebase in favor of a universal, zero-config domain parser in `organizationService` that dynamically resolves any corporate domain (e.g. `stripe.com` → `Stripe`, `acme-corp.co.in` → `Acme Corp`) while cleanly recognizing personal webmail providers as consumer `Individual` accounts.
 
 ---
 
