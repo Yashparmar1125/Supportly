@@ -172,11 +172,18 @@ Supportly/
 ## 🚀 Quick Start Guide
 
 ### 1. Prerequisites
+- **GitHub Repository**: [https://github.com/Yashparmar1125/Supportly](https://github.com/Yashparmar1125/Supportly)
 - **Node.js**: v18+ (tested on Node.js 20+)
 - **PostgreSQL**: Neon serverless connection URL (`postgres://...`)
 - **OpenRouter Key**: (Optional, for AI suggestions) [openrouter.ai](https://openrouter.ai)
 
-### 2. Clone & Install Dependencies
+### 2. Demo Admin Credentials
+The database has already been migrated and seeded on Neon with pre-configured admin credentials:
+- **Username**: `admin@supportly.yashparmar.in`
+- **Password**: `Supportly@2026!`
+- **Role**: `admin`
+
+### 3. Clone & Install Dependencies
 
 ```bash
 # Clone the repository
