@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router';
 import { Analytics } from '@vercel/analytics/react';
 import { AuthProvider } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
 import { router } from './lib/router';
 import './styles/index.css';
 
@@ -15,8 +16,10 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <RouterProvider router={router} />
-        <Analytics />
+        <ToastProvider>
+          <RouterProvider router={router} />
+          <Analytics />
+        </ToastProvider>
       </AuthProvider>
     </QueryClientProvider>
   </StrictMode>

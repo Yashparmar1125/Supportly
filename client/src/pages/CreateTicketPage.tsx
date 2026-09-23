@@ -4,11 +4,13 @@ import { InputField } from '../components/ui/InputField';
 import { TextArea } from '../components/ui/TextArea';
 import { Button } from '../components/ui/Button';
 import { useCreateTicket } from '../hooks/useTickets';
+import { useToast } from '../context/ToastContext';
 import { ArrowLeft, Send, Sparkles } from 'lucide-react';
 
 export const CreateTicketPage: React.FC = () => {
   const navigate = useNavigate();
   const createMutation = useCreateTicket();
+  const toast = useToast();
   const [error, setError] = useState('');
 
   const [form, setForm] = useState({
@@ -22,8 +24,15 @@ export const CreateTicketPage: React.FC = () => {
     e.preventDefault();
     setError('');
     createMutation.mutate(form, {
-      onSuccess: (data) => navigate(`/tickets/${data.ticket_id}`),
-      onError: (err: any) => setError(err?.error || 'Failed to create ticket'),
+      onSuccess: (data) => {
+        toast.success(`Ticket ${data.ticket_id} created successfully!`);
+        navigate(`/tickets/${data.ticket_id}`);
+      },
+      onError: (err: any) => {
+        const msg = err?.error || err?.message || 'Failed to create ticket';
+        setError(msg);
+        toast.error(msg);
+      },
     });
   };
 

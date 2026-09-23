@@ -3,6 +3,7 @@ import cors from "cors";
 import { env } from "../src/config/env.js";
 import authRoutes from "../src/routes/auth.routes.js";
 import ticketRoutes from "../src/routes/ticket.routes.js";
+import healthRoutes from "../src/routes/health.routes.js";
 import { errorHandler } from "../src/middleware/error.middleware.js";
 import { apiLimiter } from "../src/middleware/rate-limit.middleware.js";
 
@@ -40,14 +41,8 @@ app.use(cors({
 
 app.use(express.json({ limit: "1mb" }));
 
-// Uptime and Health Check probes
-app.get(["/health", "/api/health"], (_req, res) => {
-  res.status(200).json({
-    status: "ok",
-    service: "supportly-api",
-    timestamp: new Date().toISOString(),
-  });
-});
+// Uptime and Health Check probes (probes PostgreSQL pool latency)
+app.use(healthRoutes);
 
 // Apply global rate limiting to all /api routes
 app.use("/api", apiLimiter);

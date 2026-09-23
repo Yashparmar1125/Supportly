@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.4] - 2026-09-24
+
+### UI Feedback, Resilience & Health Monitoring
+- **Supportly Global Toast & Notification System**:
+  - Implemented `ToastContext` and `useToast()` hook with sleek, brand-compliant toast alerts matching the Supportly design tokens (`--color-ink`, `--color-card`, `--shadow-lg`, Lucide vector icons).
+  - Wired instant visual feedback for ticket status updates, priority overrides, category adjustments, note submissions, AI suggestion clipboard copies, and network errors.
+  - Auto-dismissing timer (3.5s) with smooth slide-up + fade-in animations and accessible close button.
+- **Supportly Branded 404 Route**:
+  - Created `NotFoundPage.tsx` styled with Supportly's signature macOS chrome frame, traffic-light window controls, Manrope typography, and quick navigation back to the ticket dashboard or public support portal.
+  - Registered catch-all `*` route in `router.tsx` to prevent blank React screens on invalid paths or deleted ticket IDs.
+- **Global Error Boundary**:
+  - Created `ErrorBoundary.tsx` catching runtime exceptions gracefully and providing an interactive "Reload Application" recovery control and diagnostics.
+- **PostgreSQL Pool Health Probe**:
+  - Implemented `server/src/routes/health.routes.ts` with real database pinging (`SELECT 1 AS alive`) and latency benchmarking.
+  - Returns structured health metrics: `{ status, service, version, uptime_seconds, database: { status, latency_ms } }` on `/health` and `/api/health`.
+
+---
+
 ## [1.1.3] - 2026-09-24
 
 ### Refactoring & Core Logic Hardening

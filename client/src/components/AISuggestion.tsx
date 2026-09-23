@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from './ui/Button';
 import { Sparkles, Copy, Check, ArrowDownToLine } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 interface AISuggestionProps {
   onSuggest: () => void;
@@ -16,11 +17,13 @@ export const AISuggestion: React.FC<AISuggestionProps> = ({
   onApply,
 }) => {
   const [copied, setCopied] = useState(false);
+  const toast = useToast();
 
   const handleCopy = () => {
     if (suggestion) {
       navigator.clipboard.writeText(suggestion);
       setCopied(true);
+      toast.success('AI reply copied to clipboard');
       setTimeout(() => setCopied(false), 2000);
     }
   };
@@ -61,7 +64,10 @@ export const AISuggestion: React.FC<AISuggestionProps> = ({
             </button>
             {onApply && (
               <button
-                onClick={() => onApply(suggestion)}
+                onClick={() => {
+                  onApply(suggestion);
+                  toast.info('Copied AI response into note composer');
+                }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-white hover:bg-primary-deep transition-colors font-semibold cursor-pointer"
               >
                 <ArrowDownToLine className="w-3.5 h-3.5" />
