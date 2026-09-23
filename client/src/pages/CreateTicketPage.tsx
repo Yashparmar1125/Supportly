@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import { InputField } from '../components/ui/InputField';
 import { TextArea } from '../components/ui/TextArea';
 import { Button } from '../components/ui/Button';
 import { useCreateTicket } from '../hooks/useTickets';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Send, Sparkles } from 'lucide-react';
 
 export const CreateTicketPage: React.FC = () => {
   const navigate = useNavigate();
@@ -28,35 +28,59 @@ export const CreateTicketPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')}>
-          <ArrowLeft className="w-4 h-4 mr-1" /> Back
-        </Button>
-        <h1 className="text-[22px] font-bold text-ink">Create New Ticket</h1>
+    <div className="max-w-3xl mx-auto space-y-6 pb-12">
+      {/* Header with Breadcrumb */}
+      <div className="flex items-center gap-3 border-b border-line pb-4">
+        <button
+          onClick={() => navigate('/dashboard')}
+          className="p-2 rounded-lg border border-line bg-card hover:bg-canvas text-ink/70 hover:text-ink transition-colors cursor-pointer"
+          title="Back to Tickets"
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </button>
+        <div className="flex items-center gap-2 text-xs text-ink/60 font-medium">
+          <Link to="/dashboard" className="hover:text-primary transition-colors">Tickets</Link>
+          <span>/</span>
+          <span className="font-bold text-ink">New Ticket</span>
+        </div>
       </div>
 
-      <div className="bg-card rounded-xl shadow-card border border-line p-6">
+      <div className="bg-card rounded-2xl shadow-card border border-line p-6 sm:p-10">
+        <div className="mb-8">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eef2ff] text-primary text-xs font-mono font-bold mb-3 border border-primary/20">
+            <Sparkles className="w-3.5 h-3.5" />
+            INTERNAL AGENT LOG
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight">
+            Create Support Ticket
+          </h1>
+          <p className="text-xs sm:text-sm text-ink/60 mt-1">
+            Log an issue on behalf of a customer from phone, Slack, or email correspondence.
+          </p>
+        </div>
+
         {error && (
-          <div className="mb-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm">
+          <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm font-medium">
             {error}
           </div>
         )}
-        <form onSubmit={handleSubmit} className="space-y-5">
+
+        <form onSubmit={handleSubmit} className="space-y-6">
           <InputField
-            label="Subject"
+            label="Ticket Subject"
             required
             value={form.subject}
             onChange={(e) => setForm({ ...form, subject: e.target.value })}
-            placeholder="Brief description of the issue"
+            placeholder="e.g. Payment decline on annual invoice renewal"
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <InputField
               label="Customer Name"
               required
               value={form.customer_name}
               onChange={(e) => setForm({ ...form, customer_name: e.target.value })}
-              placeholder="Jane Doe"
+              placeholder="e.g. Rohit Mehta"
             />
             <InputField
               label="Customer Email"
@@ -64,24 +88,34 @@ export const CreateTicketPage: React.FC = () => {
               required
               value={form.customer_email}
               onChange={(e) => setForm({ ...form, customer_email: e.target.value })}
-              placeholder="jane@example.com"
+              placeholder="rohit@company.com"
             />
           </div>
+
           <TextArea
-            label="Description"
+            label="Issue Description"
             required
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            placeholder="Detailed explanation of the customer's issue..."
+            placeholder="Detailed description of the customer's problem or bug report..."
             rows={5}
           />
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-line">
-            <Button type="button" variant="ghost" onClick={() => navigate('/dashboard')}>
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-line">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/dashboard')}
+            >
               Cancel
             </Button>
-            <Button type="submit" isLoading={createMutation.isPending}>
-              Create Ticket
+            <Button
+              type="submit"
+              size="sm"
+              isLoading={createMutation.isPending}
+            >
+              <Send className="w-3.5 h-3.5 mr-1.5" /> Save &amp; Open Ticket
             </Button>
           </div>
         </form>
