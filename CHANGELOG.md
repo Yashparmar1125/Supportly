@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.3] - 2026-09-24
+
+### Refactoring & Core Logic Hardening
+- **Typed Auth Context & Ambient Declaration**: Introduced `AuthUser` and `JwtTokenPayload` with ambient `Express.Request.user` typings, eliminating unsafe type assertions across all route handlers and middlewares.
+- **Production PostgreSQL Error Code Mapping**: Enhanced global error middleware with standard SQLSTATE mappings (`23505` Unique Violation $\rightarrow$ 409 Conflict, `23503` FK Violation / `23502` Not Null / `22P02` Invalid Type / `22001` Value Too Long $\rightarrow$ 400 Bad Request), headers-sent checks, and production error masking to prevent database disclosure.
+- **Structured Validation Errors**: Standardized Zod error responses into `{ error: string, fields: Record<string, string>, details: ZodIssue[] }` for unified field-level client mapping.
+- **Decoupled AI Urgency & Impact Heuristics**: Replaced naive category-based priority escalation with an Urgency & Impact Matrix, ensuring bug and billing questions are prioritized by actual operational impact rather than category alone.
+- **Universal LLM Output Sanitization**: Implemented robust regex token scrubbers to purge synthetic reasoning tags (`<think>...</think>`) and unpopulated placeholder brackets (`\[[A-Za-z0-9\s_-]{2,30}\]`) across all model responses.
+- **Masked Admin CLI Password Input**: Hardened `create-admin.ts` with terminal raw-mode masking (`*` keystroke suppression), preventing shoulder-surfing during administrative onboarding.
+- **Centralized Frontend Utilities & Metadata Config**:
+  - Created `client/src/lib/formatters.ts` with pure, reusable date and name formatters (`getInitials`, `formatRelativeTime`, `formatDateTime`, `formatNoteTime`).
+  - Created `client/src/lib/ticketConfig.tsx` as single source of truth for channels, categories, sentiments, and icons.
+  - Deduplicated over 120 lines of redundant local helper functions across `TicketRow.tsx`, `TicketDetailPage.tsx`, and `NoteTimeline.tsx`.
+- **Hardened API Client & Client-Side JWT Expiration Check**:
+  - Re-architected `api.ts` with unified `request<T>()` runner, structured `ApiError` hierarchy, and falsy-safe query param serialization (preserving `0` and `false`).
+  - Added proactive JWT expiry validation on application startup in `AuthContext` to prevent stale token flashes and unauthorized request storms.
+- **Accessibility & UI Refinements**:
+  - Added `aria-invalid` and `aria-describedby` associations to `InputField` and `TextArea`.
+  - Added `size` responsiveness (`sm` / `md`) to `PriorityBadge`.
+  - Rendered dynamic user role in the navbar badge and dropdown profile panel.
+  - Added `motion-reduce:animate-none` to `StatusBadge` pulsing indicator.
+
+---
+
 ## [1.1.2] - 2026-09-24
 
 ### Security & Critical Fixes

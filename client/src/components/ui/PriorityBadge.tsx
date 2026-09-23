@@ -11,6 +11,7 @@ interface PriorityBadgeProps {
 export const PriorityBadge: React.FC<PriorityBadgeProps> = ({
   priority,
   showSla = false,
+  size = 'md',
 }) => {
   const configs: Record<
     TicketPriority,
@@ -18,7 +19,7 @@ export const PriorityBadge: React.FC<PriorityBadgeProps> = ({
       label: string;
       sla: string;
       textColor: string;
-      icon: React.ReactNode;
+      icon: (iconSize: string) => React.ReactNode;
       slaBadge: string;
     }
   > = {
@@ -26,38 +27,40 @@ export const PriorityBadge: React.FC<PriorityBadgeProps> = ({
       label: 'Urgent',
       sla: '2h SLA',
       textColor: 'text-rose-600',
-      icon: <Flame className="w-3.5 h-3.5 text-rose-500 shrink-0" />,
+      icon: (s) => <Flame className={`${s} text-rose-500 shrink-0`} />,
       slaBadge: 'text-rose-700 bg-rose-50 border-rose-200/80',
     },
     High: {
       label: 'High',
       sla: '8h SLA',
       textColor: 'text-amber-600',
-      icon: <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />,
+      icon: (s) => <AlertCircle className={`${s} text-amber-500 shrink-0`} />,
       slaBadge: 'text-amber-800 bg-amber-50 border-amber-200/80',
     },
     Medium: {
       label: 'Medium',
       sla: '24h SLA',
       textColor: 'text-indigo-600',
-      icon: <Clock className="w-3.5 h-3.5 text-indigo-500 shrink-0" />,
+      icon: (s) => <Clock className={`${s} text-indigo-500 shrink-0`} />,
       slaBadge: 'text-indigo-700 bg-indigo-50/80 border-indigo-200/60',
     },
     Low: {
       label: 'Low',
       sla: '48h SLA',
       textColor: 'text-slate-500',
-      icon: <ArrowDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />,
+      icon: (s) => <ArrowDown className={`${s} text-slate-400 shrink-0`} />,
       slaBadge: 'text-slate-600 bg-slate-50 border-slate-200/70',
     },
   };
 
   const config = configs[priority] || configs.Medium;
+  const iconSizeClass = size === 'sm' ? 'w-3 h-3' : 'w-3.5 h-3.5';
+  const textSizeClass = size === 'sm' ? 'text-[11px]' : 'text-xs';
 
   return (
     <div className="inline-flex items-center gap-1.5 shrink-0 select-none">
-      <span className="shrink-0">{config.icon}</span>
-      <span className={`text-xs font-semibold ${config.textColor}`}>
+      <span className="shrink-0">{config.icon(iconSizeClass)}</span>
+      <span className={`${textSizeClass} font-semibold ${config.textColor}`}>
         {config.label}
       </span>
       {showSla && (

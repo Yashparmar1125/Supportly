@@ -36,7 +36,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
     >
       <span className="relative flex h-2 w-2">
         {config.pulse && (
-          <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${config.dot}`} />
+          <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 motion-reduce:animate-none ${config.dot}`} />
         )}
         <span className={`relative inline-flex rounded-full h-2 w-2 ${config.dot}`} />
       </span>

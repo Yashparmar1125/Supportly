@@ -74,7 +74,7 @@ export const Navbar: React.FC = () => {
               </span>
               <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded bg-indigo-50 text-[10px] font-mono font-bold text-primary border border-primary/20">
                 <ShieldCheck className="w-2.5 h-2.5" />
-                ADMIN
+                {user?.role?.toUpperCase() || 'ADMIN'}
               </span>
             </div>
 
