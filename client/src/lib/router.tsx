@@ -8,22 +8,30 @@ import { CreateTicketPage } from '../pages/CreateTicketPage';
 import { TicketDetailPage } from '../pages/TicketDetailPage';
 
 import { PublicTicketPage } from '../pages/PublicTicketPage';
+import { NotFoundPage } from '../pages/NotFoundPage';
+import { ErrorBoundary } from '../components/layout/ErrorBoundary';
 
 export const router = createBrowserRouter([
-  { path: '/', element: <LandingPage /> },
-  { path: '/login', element: <LoginPage /> },
-  { path: '/submit-ticket', element: <PublicTicketPage /> },
   {
-    element: <AuthGuard />,
+    errorElement: <ErrorBoundary />,
     children: [
+      { path: '/', element: <LandingPage /> },
+      { path: '/login', element: <LoginPage /> },
+      { path: '/submit-ticket', element: <PublicTicketPage /> },
       {
-        element: <AppLayout />,
+        element: <AuthGuard />,
         children: [
-          { path: '/dashboard', element: <DashboardPage /> },
-          { path: '/tickets/new', element: <CreateTicketPage /> },
-          { path: '/tickets/:ticketId', element: <TicketDetailPage /> },
-        ]
-      }
-    ]
-  }
+          {
+            element: <AppLayout />,
+            children: [
+              { path: '/dashboard', element: <DashboardPage /> },
+              { path: '/tickets/new', element: <CreateTicketPage /> },
+              { path: '/tickets/:ticketId', element: <TicketDetailPage /> },
+            ],
+          },
+        ],
+      },
+      { path: '*', element: <NotFoundPage /> },
+    ],
+  },
 ]);

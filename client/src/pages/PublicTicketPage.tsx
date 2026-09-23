@@ -5,10 +5,12 @@ import { TextArea } from '../components/ui/TextArea';
 import { Button } from '../components/ui/Button';
 import { Logo } from '../components/ui/Logo';
 import { useCreateTicket } from '../hooks/useTickets';
+import { useToast } from '../context/ToastContext';
 import { CheckCircle2, ArrowLeft, Send, Sparkles } from 'lucide-react';
 
 export const PublicTicketPage: React.FC = () => {
   const createMutation = useCreateTicket();
+  const toast = useToast();
   const [submittedTicket, setSubmittedTicket] = useState<{
     ticket_id: string;
     created_at: string;
@@ -28,9 +30,12 @@ export const PublicTicketPage: React.FC = () => {
     createMutation.mutate(form, {
       onSuccess: (data) => {
         setSubmittedTicket(data);
+        toast.success(`Support ticket ${data.ticket_id} received!`);
       },
       onError: (err: any) => {
-        setError(err?.error || 'Failed to submit ticket. Please check your fields and try again.');
+        const msg = err?.error || err?.message || 'Failed to submit ticket. Please check your fields and try again.';
+        setError(msg);
+        toast.error(msg);
       },
     });
   };

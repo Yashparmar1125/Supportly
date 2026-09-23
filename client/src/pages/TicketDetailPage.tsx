@@ -11,6 +11,7 @@ import { AISuggestion } from '../components/AISuggestion';
 import type { TicketStatus, TicketPriority, TicketCategory } from '../types';
 import { formatDateTime, getInitials } from '../lib/formatters';
 import { getCategoryBadge, getSentimentIcon, getChannelIcon } from '../lib/ticketConfig';
+import { useToast } from '../context/ToastContext';
 import {
   ArrowLeft,
   Mail,
@@ -28,6 +29,7 @@ import {
 export const TicketDetailPage: React.FC = () => {
   const { ticketId } = useParams<{ ticketId: string }>();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const { data: ticket, isLoading } = useTicket(ticketId!);
   const updateMutation = useUpdateTicket();
@@ -62,31 +64,69 @@ export const TicketDetailPage: React.FC = () => {
   }
 
   const handleStatusChange = (newStatus: TicketStatus) => {
-    updateMutation.mutate({
-      ticketId: ticket.ticket_id,
-      status: newStatus,
-    });
+    updateMutation.mutate(
+      {
+        ticketId: ticket.ticket_id,
+        status: newStatus,
+      },
+      {
+        onSuccess: () => {
+          toast.success(`Ticket status updated to ${newStatus}`);
+        },
+        onError: (err: any) => {
+          toast.error(err?.message || 'Failed to update ticket status');
+        },
+      }
+    );
   };
 
   const handlePriorityChange = (newPriority: TicketPriority) => {
-    updateMutation.mutate({
-      ticketId: ticket.ticket_id,
-      priority: newPriority,
-    });
+    updateMutation.mutate(
+      {
+        ticketId: ticket.ticket_id,
+        priority: newPriority,
+      },
+      {
+        onSuccess: () => {
+          toast.success(`Priority updated to ${newPriority}`);
+        },
+        onError: (err: any) => {
+          toast.error(err?.message || 'Failed to update priority');
+        },
+      }
+    );
   };
 
   const handleCategoryChange = (newCategory: TicketCategory) => {
-    updateMutation.mutate({
-      ticketId: ticket.ticket_id,
-      category: newCategory,
-    });
+    updateMutation.mutate(
+      {
+        ticketId: ticket.ticket_id,
+        category: newCategory,
+      },
+      {
+        onSuccess: () => {
+          toast.success(`Category updated to ${newCategory}`);
+        },
+        onError: (err: any) => {
+          toast.error(err?.message || 'Failed to update category');
+        },
+      }
+    );
   };
 
   const handleAddNote = () => {
     if (!newNote.trim()) return;
     updateMutation.mutate(
       { ticketId: ticket.ticket_id, note: newNote.trim() },
-      { onSuccess: () => setNewNote('') }
+      {
+        onSuccess: () => {
+          setNewNote('');
+          toast.success('Note added to timeline');
+        },
+        onError: (err: any) => {
+          toast.error(err?.message || 'Failed to add note');
+        },
+      }
     );
   };
 
