@@ -30,6 +30,9 @@ CREATE TABLE IF NOT EXISTS notes (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Atomic sequence for concurrency-safe ticket ID generation
+CREATE SEQUENCE IF NOT EXISTS ticket_id_seq START WITH 1;
+
 -- Backward-compatible column additions for existing tables
 ALTER TABLE tickets ADD COLUMN IF NOT EXISTS priority TEXT CHECK(priority IN ('Urgent', 'High', 'Medium', 'Low')) DEFAULT 'Medium' NOT NULL;
 ALTER TABLE tickets ADD COLUMN IF NOT EXISTS category TEXT CHECK(category IN ('Billing', 'Technical Bug', 'Feature Request', 'Account Access', 'General')) DEFAULT 'General' NOT NULL;
@@ -40,6 +43,7 @@ ALTER TABLE tickets ADD COLUMN IF NOT EXISTS organization TEXT DEFAULT 'Individu
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status);
 CREATE INDEX IF NOT EXISTS idx_tickets_priority_category ON tickets(priority, category);
+CREATE INDEX IF NOT EXISTS idx_tickets_created_at ON tickets(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_notes_ticket_id ON notes(ticket_id);
 
 -- Full text search index

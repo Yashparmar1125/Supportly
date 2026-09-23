@@ -1,9 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
-import type { Ticket } from '../types';
+import type { Ticket, TicketCategory } from '../types';
 import { StatusBadge } from './ui/StatusBadge';
 import { PriorityBadge } from './ui/PriorityBadge';
-import { ChevronRight, Clock, Mail, Globe, Code2 } from 'lucide-react';
+import {
+  ChevronRight,
+  Mail,
+  Globe,
+  Code2,
+  Building2,
+  CreditCard,
+  Bug,
+  Sparkles,
+  KeyRound,
+  FileText,
+} from 'lucide-react';
 
 export const TicketRow: React.FC<{ ticket: Ticket }> = ({ ticket }) => {
   const navigate = useNavigate();
@@ -39,21 +50,62 @@ export const TicketRow: React.FC<{ ticket: Ticket }> = ({ ticket }) => {
     switch (channel) {
       case 'Email':
         return (
-          <span title="Inbound Email">
+          <span title="Inbound Email" className="shrink-0">
             <Mail className="w-3 h-3 text-ink/40" />
           </span>
         );
       case 'API':
         return (
-          <span title="API Webhook">
+          <span title="API Webhook" className="shrink-0">
             <Code2 className="w-3 h-3 text-purple-600" />
           </span>
         );
       case 'Web Portal':
       default:
         return (
-          <span title="Customer Portal">
+          <span title="Customer Portal" className="shrink-0">
             <Globe className="w-3 h-3 text-indigo-500" />
+          </span>
+        );
+    }
+  };
+
+  const getCategoryBadge = (category?: TicketCategory | string) => {
+    switch (category) {
+      case 'Billing':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium text-emerald-700 bg-emerald-50/90 border border-emerald-200/70">
+            <CreditCard className="w-3 h-3 text-emerald-600 shrink-0" />
+            <span>Billing</span>
+          </span>
+        );
+      case 'Technical Bug':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium text-rose-700 bg-rose-50/90 border border-rose-200/70">
+            <Bug className="w-3 h-3 text-rose-600 shrink-0" />
+            <span>Bug Report</span>
+          </span>
+        );
+      case 'Feature Request':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium text-amber-800 bg-amber-50/90 border border-amber-200/70">
+            <Sparkles className="w-3 h-3 text-amber-600 shrink-0" />
+            <span>Feature</span>
+          </span>
+        );
+      case 'Account Access':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium text-indigo-700 bg-indigo-50/90 border border-indigo-200/70">
+            <KeyRound className="w-3 h-3 text-indigo-600 shrink-0" />
+            <span>Access</span>
+          </span>
+        );
+      case 'General':
+      default:
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium text-slate-600 bg-slate-100/90 border border-slate-200/70">
+            <FileText className="w-3 h-3 text-slate-500 shrink-0" />
+            <span>General</span>
           </span>
         );
     }
@@ -61,74 +113,89 @@ export const TicketRow: React.FC<{ ticket: Ticket }> = ({ ticket }) => {
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label={`View ticket ${ticket.ticket_id}: ${ticket.subject}`}
       onClick={() => navigate(`/tickets/${ticket.ticket_id}`)}
-      className="grid grid-cols-[90px_1fr_auto_70px] sm:grid-cols-[100px_1fr_120px_110px_32px] gap-3 sm:gap-4 items-center px-4 sm:px-6 py-4 hover:bg-[#f8f9ff] cursor-pointer transition-all border-l-2 border-l-transparent hover:border-l-primary group"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          navigate(`/tickets/${ticket.ticket_id}`);
+        }
+      }}
+      className="grid grid-cols-[80px_1fr_auto] sm:grid-cols-[90px_1fr_125px_100px_105px_75px_20px] gap-3 sm:gap-4 items-center px-4 sm:px-6 py-3.5 hover:bg-[#fafbff] focus:bg-[#f4f6ff] focus:outline-none focus:border-l-primary cursor-pointer transition-all border-l-2 border-l-transparent hover:border-l-primary group"
     >
       {/* 1. Ticket ID */}
       <div>
-        <span className="font-mono text-xs font-bold text-primary bg-[#eef2ff] border border-primary/20 px-2.5 py-1 rounded-md tracking-tight inline-block">
+        <span className="font-mono text-xs font-bold text-primary bg-[#eef2ff] border border-primary/20 px-2 py-1 rounded-md tracking-tight inline-block">
           {ticket.ticket_id}
         </span>
       </div>
 
-      {/* 2. Subject & Triage Metadata */}
+      {/* 2. Subject & Clean Customer Hierarchy */}
       <div className="min-w-0 pr-2">
-        <div className="flex items-center gap-2 flex-wrap">
-          <p className="font-bold text-ink text-sm sm:text-[14.5px] truncate group-hover:text-primary transition-colors max-w-md">
-            {ticket.subject}
-          </p>
+        <p className="font-bold text-ink text-sm sm:text-[14.5px] truncate group-hover:text-primary transition-colors">
+          {ticket.subject}
+        </p>
 
-          {/* Priority SLA Badge */}
-          {ticket.priority && (
-            <PriorityBadge priority={ticket.priority} size="sm" />
-          )}
-
-          {/* Category Tag */}
-          {ticket.category && (
-            <span className="hidden md:inline-flex items-center text-[10px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200/80">
-              {ticket.category}
-            </span>
-          )}
-        </div>
-
-        {/* Customer & Organization Sub-row */}
+        {/* Customer & Secondary Metadata Sub-row */}
         <div className="flex items-center gap-2 text-xs text-ink/60 mt-1 truncate">
-          <div className="flex items-center gap-1.5 font-medium text-ink/80 shrink-0">
+          <div className="flex items-center gap-1.5 font-semibold text-ink/85 shrink-0">
             <div className="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[9px] font-bold shrink-0">
               {getInitials(ticket.customer_name)}
             </div>
-            <span className="truncate">{ticket.customer_name}</span>
+            <span className="truncate max-w-[130px]">{ticket.customer_name}</span>
           </div>
 
-          {/* Organization Pill */}
+          {/* Organization Tag (Clean text with subtle building icon) */}
           {ticket.organization && ticket.organization !== 'Individual' && (
-            <span className="hidden lg:inline-flex items-center px-1.5 py-0.2 rounded bg-indigo-50/80 text-primary font-bold text-[10px] border border-primary/20">
-              {ticket.organization}
-            </span>
+            <>
+              <span className="text-ink/20 font-bold shrink-0">·</span>
+              <span className="inline-flex items-center gap-1 text-primary font-medium text-[11px] shrink-0">
+                <Building2 className="w-3 h-3 text-primary/70 shrink-0" />
+                <span>{ticket.organization}</span>
+              </span>
+            </>
           )}
 
-          <span className="text-ink/30 hidden md:inline">·</span>
+          <span className="text-ink/20 font-bold shrink-0 hidden md:inline">·</span>
 
-          {/* Channel Indicator */}
-          <div className="hidden md:flex items-center gap-1 text-ink/50 truncate">
+          {/* Channel Indicator & Email */}
+          <div className="hidden md:flex items-center gap-1 text-ink/45 truncate text-[11px]">
             {getChannelIcon(ticket.channel)}
             <span className="truncate">{ticket.customer_email}</span>
+          </div>
+
+          {/* Mobile-only Category & Priority chips */}
+          <div className="sm:hidden flex items-center gap-1 shrink-0">
+            <span className="text-ink/20 font-bold">·</span>
+            {getCategoryBadge(ticket.category)}
+            <PriorityBadge priority={ticket.priority || 'Medium'} />
           </div>
         </div>
       </div>
 
-      {/* 3. Status Badge */}
-      <div className="shrink-0">
-        <StatusBadge status={ticket.status} />
+      {/* 3. Dedicated Category Column (Desktop) */}
+      <div className="hidden sm:flex items-center shrink-0">
+        {getCategoryBadge(ticket.category)}
       </div>
 
-      {/* 4. Timestamp */}
-      <div className="hidden sm:flex items-center gap-1.5 text-xs text-ink/55 font-medium shrink-0 justify-end">
-        <Clock className="w-3.5 h-3.5 text-ink/40" />
+      {/* 4. Priority Column (Desktop) */}
+      <div className="hidden sm:flex items-center shrink-0">
+        <PriorityBadge priority={ticket.priority || 'Medium'} />
+      </div>
+
+      {/* 5. Status Column */}
+      <div className="shrink-0">
+        <StatusBadge status={ticket.status} size="md" />
+      </div>
+
+      {/* 6. Timestamp (Desktop) */}
+      <div className="hidden sm:flex items-center text-xs text-ink/50 font-medium shrink-0 justify-end whitespace-nowrap">
         <span>{formatRelativeTime(ticket.created_at)}</span>
       </div>
 
-      {/* 5. Chevron Arrow */}
+      {/* 7. Chevron Arrow */}
       <div className="hidden sm:flex justify-end text-ink/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all">
         <ChevronRight className="w-4 h-4" />
       </div>

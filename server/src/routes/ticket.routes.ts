@@ -4,10 +4,11 @@ import { aiService } from "../services/ai.service.js";
 import { validate } from "../middleware/validate.middleware.js";
 import { createTicketSchema, updateTicketSchema, queryTicketsSchema, type QueryTicketsRequest } from "../schemas/ticket.schema.js";
 import { authenticate } from "../middleware/auth.middleware.js";
+import { ticketCreateLimiter, aiSuggestLimiter } from "../middleware/rate-limit.middleware.js";
 
 const router = Router();
 
-router.post("/", validate(createTicketSchema, "body"), async (req, res, next) => {
+router.post("/", ticketCreateLimiter, validate(createTicketSchema, "body"), async (req, res, next) => {
   try {
     const result = await ticketService.create(req.body);
     res.status(201).json(result);
@@ -48,7 +49,7 @@ router.put("/:ticket_id", authenticate, validate(updateTicketSchema, "body"), as
   }
 });
 
-router.post("/:ticket_id/suggest", authenticate, async (req, res, next) => {
+router.post("/:ticket_id/suggest", authenticate, aiSuggestLimiter, async (req, res, next) => {
   try {
     const ticket = await ticketService.findById(req.params.ticket_id);
     if (!ticket) return res.status(404).json({ error: "Ticket not found" });

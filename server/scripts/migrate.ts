@@ -13,7 +13,23 @@ async function runMigrations() {
     
     console.log('Running database migrations...');
     await pool.query(schemaSql);
-    console.log('Migrations completed successfully.');
+
+    // Synchronize sequence with existing tickets
+    await pool.query(`
+      SELECT setval(
+        'ticket_id_seq',
+        GREATEST(
+          COALESCE((
+            SELECT MAX(CAST(SUBSTRING(ticket_id FROM 5) AS INTEGER)) 
+            FROM tickets 
+            WHERE ticket_id ~ '^TKT-[0-9]+$'
+          ), 0),
+          1
+        )
+      );
+    `);
+
+    console.log('Migrations and sequence synchronization completed successfully.');
   } catch (error) {
     console.error('Error running migrations:', error);
     process.exit(1);

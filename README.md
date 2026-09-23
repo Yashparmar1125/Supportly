@@ -14,7 +14,7 @@
   <a href="https://neon.tech"><img src="https://img.shields.io/badge/PostgreSQL-Neon_Serverless-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
   <a href="https://openrouter.ai"><img src="https://img.shields.io/badge/OpenRouter-AI_Copilot-7C3AED?style=flat-square&logo=openai&logoColor=white" alt="OpenRouter" /></a>
   <a href="https://vercel.com"><img src="https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat-square&logo=vercel&logoColor=white" alt="Vercel" /></a>
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/Release-v1.1.0-059669?style=flat-square" alt="Release v1.1.0" /></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/Release-v1.1.2-059669?style=flat-square" alt="Release v1.1.2" /></a>
 </p>
 
 <p align="center">

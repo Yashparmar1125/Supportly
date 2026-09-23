@@ -13,6 +13,9 @@ import {
   CheckCircle2,
   ExternalLink,
   Flame,
+  AlertCircle,
+  ArrowDown,
+  SlidersHorizontal,
 } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
@@ -109,6 +112,22 @@ export const DashboardPage: React.FC = () => {
     setSearchParams({}, { replace: true });
   };
 
+  const getPriorityFilterIcon = (p: TicketPriority | 'All') => {
+    switch (p) {
+      case 'Urgent':
+        return <Flame className="w-3.5 h-3.5 text-rose-600 shrink-0" />;
+      case 'High':
+        return <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />;
+      case 'Medium':
+        return <Clock className="w-3.5 h-3.5 text-indigo-600 shrink-0" />;
+      case 'Low':
+        return <ArrowDown className="w-3.5 h-3.5 text-slate-500 shrink-0" />;
+      case 'All':
+      default:
+        return <SlidersHorizontal className="w-3.5 h-3.5 text-ink/50 shrink-0" />;
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       {/* 1. Dashboard Header */}
@@ -146,8 +165,18 @@ export const DashboardPage: React.FC = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
         {/* Total Inbound */}
         <div
+          role="button"
+          tabIndex={0}
+          aria-label="Filter by all inbound tickets"
+          aria-pressed={status === 'All'}
           onClick={() => handleStatusChange('All')}
-          className={`p-4 rounded-xl border transition-all cursor-pointer ${
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleStatusChange('All');
+            }
+          }}
+          className={`p-4 rounded-xl border transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ink ${
             status === 'All'
               ? 'bg-card border-ink shadow-sm ring-1 ring-ink'
               : 'bg-card border-line hover:border-ink/40'
@@ -165,8 +194,18 @@ export const DashboardPage: React.FC = () => {
 
         {/* Needs Attention (Open) */}
         <div
+          role="button"
+          tabIndex={0}
+          aria-label="Filter by open tickets"
+          aria-pressed={status === 'Open'}
           onClick={() => handleStatusChange('Open')}
-          className={`p-4 rounded-xl border transition-all cursor-pointer ${
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleStatusChange('Open');
+            }
+          }}
+          className={`p-4 rounded-xl border transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
             status === 'Open'
               ? 'bg-card border-primary shadow-sm ring-1 ring-primary'
               : 'bg-card border-line hover:border-primary/50'
@@ -175,7 +214,7 @@ export const DashboardPage: React.FC = () => {
           <div className="flex items-center justify-between text-primary mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Needs Attention</span>
             <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 motion-reduce:animate-none" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
             </span>
           </div>
@@ -189,8 +228,18 @@ export const DashboardPage: React.FC = () => {
 
         {/* Active Triage (In Progress) */}
         <div
+          role="button"
+          tabIndex={0}
+          aria-label="Filter by in-progress tickets"
+          aria-pressed={status === 'In Progress'}
           onClick={() => handleStatusChange('In Progress')}
-          className={`p-4 rounded-xl border transition-all cursor-pointer ${
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleStatusChange('In Progress');
+            }
+          }}
+          className={`p-4 rounded-xl border transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
             status === 'In Progress'
               ? 'bg-card border-amber-600 shadow-sm ring-1 ring-amber-600'
               : 'bg-card border-line hover:border-amber-600/50'
@@ -210,8 +259,18 @@ export const DashboardPage: React.FC = () => {
 
         {/* Resolved (Closed) */}
         <div
+          role="button"
+          tabIndex={0}
+          aria-label="Filter by resolved tickets"
+          aria-pressed={status === 'Closed'}
           onClick={() => handleStatusChange('Closed')}
-          className={`p-4 rounded-xl border transition-all cursor-pointer ${
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleStatusChange('Closed');
+            }
+          }}
+          className={`p-4 rounded-xl border transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
             status === 'Closed'
               ? 'bg-card border-emerald-600 shadow-sm ring-1 ring-emerald-600'
               : 'bg-card border-line hover:border-emerald-600/50'
@@ -241,7 +300,7 @@ export const DashboardPage: React.FC = () => {
 
           {/* Priority SLA Filter */}
           <div className="flex items-center gap-1.5 pl-1 sm:pl-3 sm:border-l border-line text-xs">
-            <Flame className="w-3.5 h-3.5 text-rose-500" />
+            {getPriorityFilterIcon(priority)}
             <select
               value={priority}
               onChange={(e) => handlePriorityChange(e.target.value as any)}
@@ -249,10 +308,10 @@ export const DashboardPage: React.FC = () => {
               aria-label="Filter by priority SLA"
             >
               <option value="All">All Priorities</option>
-              <option value="Urgent">🔥 Urgent (2h SLA)</option>
-              <option value="High">⚠️ High (8h SLA)</option>
-              <option value="Medium">⏱️ Medium (24h SLA)</option>
-              <option value="Low">💤 Low (48h SLA)</option>
+              <option value="Urgent">Urgent (2h SLA)</option>
+              <option value="High">High (8h SLA)</option>
+              <option value="Medium">Medium (24h SLA)</option>
+              <option value="Low">Low (48h SLA)</option>
             </select>
           </div>
         </div>
