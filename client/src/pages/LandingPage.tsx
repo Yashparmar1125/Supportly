@@ -25,10 +25,16 @@ export const LandingPage: React.FC = () => {
 
           <div className="flex items-center gap-3">
             <Link
+              to="/submit-ticket"
+              className="inline-flex items-center justify-center text-xs font-bold text-white bg-primary hover:bg-primary-deep px-4 py-2 rounded-full shadow-[0_3px_12px_rgba(91,80,238,0.3)] transition-all hover:-translate-y-0.5"
+            >
+              Submit Ticket
+            </Link>
+            <Link
               to="/login"
               className="inline-flex items-center text-sm font-semibold text-ink/80 hover:text-primary px-3 py-1.5 transition-colors"
             >
-              Sign in
+              Agent Sign in
             </Link>
             <Link
               to="/login"

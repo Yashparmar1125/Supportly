@@ -7,9 +7,12 @@ import { DashboardPage } from '../pages/DashboardPage';
 import { CreateTicketPage } from '../pages/CreateTicketPage';
 import { TicketDetailPage } from '../pages/TicketDetailPage';
 
+import { PublicTicketPage } from '../pages/PublicTicketPage';
+
 export const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> },
   { path: '/login', element: <LoginPage /> },
+  { path: '/submit-ticket', element: <PublicTicketPage /> },
   {
     element: <AuthGuard />,
     children: [

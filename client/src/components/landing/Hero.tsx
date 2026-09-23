@@ -10,6 +10,7 @@ import {
   Search,
   Sparkles,
   Cpu,
+  Send,
 } from 'lucide-react';
 
 export const Hero: React.FC = () => {
@@ -47,15 +48,22 @@ export const Hero: React.FC = () => {
         {/* CTA Buttons Row */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto mb-6">
           <Link
-            to="/login"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-deep text-white font-bold text-sm px-6 py-3.5 rounded-lg shadow-[0_4px_22px_rgba(91,80,238,0.45)] transition-all transform hover:-translate-y-0.5 cursor-pointer"
+            to="/submit-ticket"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-deep text-white font-bold text-sm px-7 py-3.5 rounded-lg shadow-[0_4px_22px_rgba(91,80,238,0.45)] transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
-            <span>Get Started Free</span>
+            <Send className="w-4 h-4" />
+            <span>Submit a Ticket</span>
+          </Link>
+          <Link
+            to="/login"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 text-white font-bold text-sm px-6 py-3.5 rounded-lg backdrop-blur-md transition-colors cursor-pointer border border-white/10"
+          >
+            <span>Agent Dashboard</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
           <a
             href="#how-it-works"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 text-white font-bold text-sm px-6 py-3.5 rounded-lg backdrop-blur-md transition-colors cursor-pointer border border-white/10"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-slate-300 hover:text-white font-semibold text-sm px-4 py-3.5 transition-colors cursor-pointer"
           >
             <PlayCircle className="w-4 h-4 text-indigo-300" />
             <span>See how it works</span>

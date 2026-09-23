@@ -7,7 +7,7 @@ import { authenticate } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
-router.post("/", authenticate, validate(createTicketSchema, "body"), async (req, res, next) => {
+router.post("/", validate(createTicketSchema, "body"), async (req, res, next) => {
   try {
     const result = await ticketService.create(req.body);
     res.status(201).json(result);
