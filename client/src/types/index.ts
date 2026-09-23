@@ -11,6 +11,26 @@ export interface Ticket {
   updated_at: string;
 }
 
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface TicketCounts {
+  all: number;
+  open: number;
+  inProgress: number;
+  closed: number;
+}
+
+export interface PaginatedTicketsResponse {
+  tickets: Ticket[];
+  pagination: PaginationMeta;
+  counts: TicketCounts;
+}
+
 export interface Note {
   id: number;
   ticket_id: string;

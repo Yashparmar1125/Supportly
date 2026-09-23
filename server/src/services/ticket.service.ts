@@ -31,23 +31,60 @@ export const ticketService = {
   },
 
   async findAll(query: QueryTicketsRequest) {
-    let sql = "SELECT * FROM tickets WHERE 1=1";
+    // 1. Compute global status metrics across all tickets for KPI cards
+    const countsRes = await pool.query(`
+      SELECT 
+        count(*)::int as total,
+        count(*) FILTER (WHERE status = 'Open')::int as open,
+        count(*) FILTER (WHERE status = 'In Progress')::int as in_progress,
+        count(*) FILTER (WHERE status = 'Closed')::int as closed
+      FROM tickets
+    `);
+    const countsRow = countsRes.rows[0];
+    const counts = {
+      all: countsRow ? Number(countsRow.total) : 0,
+      open: countsRow ? Number(countsRow.open) : 0,
+      inProgress: countsRow ? Number(countsRow.in_progress) : 0,
+      closed: countsRow ? Number(countsRow.closed) : 0,
+    };
+
+    // 2. Build filtered WHERE clause
+    let whereClause = " WHERE 1=1";
     const params: any[] = [];
     
     if (query.status) {
       params.push(query.status);
-      sql += ` AND status = $${params.length}`;
+      whereClause += ` AND status = $${params.length}`;
     }
     
     if (query.search) {
       params.push(query.search);
-      sql += ` AND search_vector @@ plainto_tsquery('english', $${params.length})`;
+      whereClause += ` AND search_vector @@ plainto_tsquery('english', $${params.length})`;
     }
 
-    sql += " ORDER BY created_at DESC";
-    
-    const { rows } = await pool.query(sql, params);
-    return rows;
+    // 3. Count matching tickets for pagination
+    const countRes = await pool.query(`SELECT count(*)::int as total FROM tickets${whereClause}`, params);
+    const total = countRes.rows[0] ? Number(countRes.rows[0].total) : 0;
+
+    // 4. Fetch paginated slice
+    const page = query.page || 1;
+    const limit = query.limit || 10;
+    const offset = (page - 1) * limit;
+
+    const dataParams = [...params, limit, offset];
+    const dataSql = `SELECT * FROM tickets${whereClause} ORDER BY created_at DESC LIMIT $${dataParams.length - 1} OFFSET $${dataParams.length}`;
+    const { rows } = await pool.query(dataSql, dataParams);
+
+    return {
+      tickets: rows,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
+      counts,
+    };
   },
 
   async findById(ticket_id: string) {

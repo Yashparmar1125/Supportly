@@ -17,6 +17,8 @@ export const updateTicketSchema = z.object({
 export const queryTicketsSchema = z.object({
   status: z.enum(["Open", "In Progress", "Closed"]).optional(),
   search: z.string().optional(),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(10),
 });
 
 export type CreateTicketRequest = z.infer<typeof createTicketSchema>;

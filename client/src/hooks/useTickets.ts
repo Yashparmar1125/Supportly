@@ -2,22 +2,32 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../lib/api';
 import { queryKeys } from '../lib/queryKeys';
 import type {
-  Ticket,
   TicketDetail,
   TicketStatus,
   CreateTicketResponse,
   UpdateTicketResponse,
   AISuggestionResponse,
+  PaginatedTicketsResponse,
 } from '../types';
 
-export const useTickets = (filters: { status?: string; search?: string } = {}) => {
+export const useTickets = (
+  filters: {
+    status?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+  } = {}
+) => {
   return useQuery({
     queryKey: queryKeys.ticketList(filters),
     queryFn: () =>
-      apiClient.get<Ticket[]>('/api/tickets', {
+      apiClient.get<PaginatedTicketsResponse>('/api/tickets', {
         ...(filters.status && filters.status !== 'All' ? { status: filters.status } : {}),
         ...(filters.search ? { search: filters.search } : {}),
+        ...(filters.page ? { page: String(filters.page) } : {}),
+        ...(filters.limit ? { limit: String(filters.limit) } : {}),
       }),
+    placeholderData: (previousData) => previousData,
   });
 };
 

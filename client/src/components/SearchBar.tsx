@@ -3,20 +3,33 @@ import { Search, X } from 'lucide-react';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
+  defaultValue?: string;
   placeholder?: string;
   className?: string;
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
   onSearch,
+  defaultValue = '',
   placeholder = 'Search by ID, name, email, subject...',
   className = '',
 }) => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(defaultValue);
+  const lastEmittedRef = React.useRef(defaultValue);
+
+  useEffect(() => {
+    if (defaultValue !== lastEmittedRef.current) {
+      setValue(defaultValue);
+      lastEmittedRef.current = defaultValue;
+    }
+  }, [defaultValue]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      onSearch(value);
+      if (value !== lastEmittedRef.current) {
+        lastEmittedRef.current = value;
+        onSearch(value);
+      }
     }, 250);
     return () => clearTimeout(timer);
   }, [value, onSearch]);

@@ -1,18 +1,27 @@
 import React from 'react';
-import type { Ticket } from '../types';
+import type { Ticket, PaginationMeta } from '../types';
 import { TicketRow } from './TicketRow';
+import { Pagination } from './ui/Pagination';
 import { Inbox, Plus } from 'lucide-react';
 import { Link } from 'react-router';
 
 interface TicketTableProps {
   tickets: Ticket[];
   isLoading: boolean;
+  isFetching?: boolean;
+  pagination?: PaginationMeta;
+  onPageChange?: (newPage: number) => void;
+  onLimitChange?: (newLimit: number) => void;
   onClearFilters?: () => void;
 }
 
 export const TicketTable: React.FC<TicketTableProps> = ({
   tickets,
   isLoading,
+  isFetching = false,
+  pagination,
+  onPageChange,
+  onLimitChange,
   onClearFilters,
 }) => {
   if (isLoading) {
@@ -89,11 +98,23 @@ export const TicketTable: React.FC<TicketTableProps> = ({
         ))}
       </div>
 
-      {/* Table Footer Bar */}
-      <div className="px-6 py-3 bg-canvas/40 border-t border-line text-xs font-medium text-ink/50 flex items-center justify-between">
-        <span>Showing {tickets.length} {tickets.length === 1 ? 'ticket' : 'tickets'}</span>
-        <span className="font-mono text-[11px]">Realtime Neon PostgreSQL</span>
-      </div>
+      {/* Table Footer Bar / Pagination */}
+      {pagination && onPageChange ? (
+        <Pagination
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+          total={pagination.total}
+          limit={pagination.limit}
+          onPageChange={onPageChange}
+          onLimitChange={onLimitChange}
+          isFetching={isFetching}
+        />
+      ) : (
+        <div className="px-6 py-3 bg-canvas/40 border-t border-line text-xs font-medium text-ink/50 flex items-center justify-between">
+          <span>Showing {tickets.length} {tickets.length === 1 ? 'ticket' : 'tickets'}</span>
+          <span className="font-mono text-[11px]">Realtime Neon PostgreSQL</span>
+        </div>
+      )}
     </div>
   );
 };

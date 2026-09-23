@@ -2,7 +2,7 @@ import { Router } from "express";
 import { ticketService } from "../services/ticket.service.js";
 import { aiService } from "../services/ai.service.js";
 import { validate } from "../middleware/validate.middleware.js";
-import { createTicketSchema, updateTicketSchema, queryTicketsSchema } from "../schemas/ticket.schema.js";
+import { createTicketSchema, updateTicketSchema, queryTicketsSchema, type QueryTicketsRequest } from "../schemas/ticket.schema.js";
 import { authenticate } from "../middleware/auth.middleware.js";
 
 const router = Router();
@@ -18,7 +18,7 @@ router.post("/", validate(createTicketSchema, "body"), async (req, res, next) =>
 
 router.get("/", authenticate, validate(queryTicketsSchema, "query"), async (req, res, next) => {
   try {
-    const result = await ticketService.findAll(req.query);
+    const result = await ticketService.findAll(req.query as unknown as QueryTicketsRequest);
     res.json(result);
   } catch (error) {
     next(error);

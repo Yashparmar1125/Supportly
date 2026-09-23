@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router';
+import React from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router';
 import { Button } from '../components/ui/Button';
 import { SearchBar } from '../components/SearchBar';
 import { StatusFilter } from '../components/StatusFilter';
@@ -16,29 +16,80 @@ import {
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
-  const [search, setSearch] = useState('');
-  const [status, setStatus] = useState<TicketStatus | 'All'>('All');
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // Base tickets for accurate metrics
-  const { data: allTickets = [], isLoading: isLoadingAll } = useTickets({});
+  // Extract query params as state (URL single-source of truth)
+  const statusParam = searchParams.get('status') as TicketStatus | null;
+  const status: TicketStatus | 'All' =
+    statusParam && ['Open', 'In Progress', 'Closed'].includes(statusParam)
+      ? statusParam
+      : 'All';
+  const search = searchParams.get('search') || '';
+  const page = Math.max(1, Number(searchParams.get('page')) || 1);
+  const limit = Math.max(5, Math.min(100, Number(searchParams.get('limit')) || 10));
 
-  // Query with filters applied
-  const { data: tickets = [], isLoading: isLoadingFiltered } = useTickets({
+  // Query tickets from backend with pagination & filters
+  const { data, isLoading, isFetching } = useTickets({
     status: status !== 'All' ? status : undefined,
     search: search.trim() || undefined,
+    page,
+    limit,
   });
 
-  const isLoading = isLoadingFiltered || isLoadingAll;
+  const tickets = data?.tickets || [];
+  const pagination = data?.pagination;
+  const counts = data?.counts || { all: 0, open: 0, inProgress: 0, closed: 0 };
 
-  // Compute live KPI metrics
-  const counts = useMemo(() => {
-    return {
-      all: allTickets.length,
-      open: allTickets.filter((t) => t.status === 'Open').length,
-      inProgress: allTickets.filter((t) => t.status === 'In Progress').length,
-      closed: allTickets.filter((t) => t.status === 'Closed').length,
-    };
-  }, [allTickets]);
+  // State handlers that synchronize with the URL
+  const handleStatusChange = (newStatus: TicketStatus | 'All') => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (newStatus && newStatus !== 'All') {
+      nextParams.set('status', newStatus);
+    } else {
+      nextParams.delete('status');
+    }
+    // Always reset page to 1 when changing status filter
+    nextParams.delete('page');
+    setSearchParams(nextParams, { replace: true });
+  };
+
+  const handleSearchChange = (newSearch: string) => {
+    const nextParams = new URLSearchParams(searchParams);
+    const trimmed = newSearch.trim();
+    if (trimmed) {
+      nextParams.set('search', trimmed);
+    } else {
+      nextParams.delete('search');
+    }
+    // Always reset page to 1 when changing search query
+    nextParams.delete('page');
+    setSearchParams(nextParams, { replace: true });
+  };
+
+  const handlePageChange = (newPage: number) => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (newPage > 1) {
+      nextParams.set('page', String(newPage));
+    } else {
+      nextParams.delete('page');
+    }
+    setSearchParams(nextParams);
+  };
+
+  const handleLimitChange = (newLimit: number) => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (newLimit !== 10) {
+      nextParams.set('limit', String(newLimit));
+    } else {
+      nextParams.delete('limit');
+    }
+    nextParams.delete('page'); // Reset to page 1 on limit change
+    setSearchParams(nextParams);
+  };
+
+  const handleClearFilters = () => {
+    setSearchParams({}, { replace: true });
+  };
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
@@ -77,7 +128,7 @@ export const DashboardPage: React.FC = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
         {/* Total Inbound */}
         <div
-          onClick={() => setStatus('All')}
+          onClick={() => handleStatusChange('All')}
           className={`p-4 rounded-xl border transition-all cursor-pointer ${
             status === 'All'
               ? 'bg-card border-ink shadow-sm ring-1 ring-ink'
@@ -96,7 +147,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Needs Attention (Open) */}
         <div
-          onClick={() => setStatus('Open')}
+          onClick={() => handleStatusChange('Open')}
           className={`p-4 rounded-xl border transition-all cursor-pointer ${
             status === 'Open'
               ? 'bg-card border-primary shadow-sm ring-1 ring-primary'
@@ -120,7 +171,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Active Triage (In Progress) */}
         <div
-          onClick={() => setStatus('In Progress')}
+          onClick={() => handleStatusChange('In Progress')}
           className={`p-4 rounded-xl border transition-all cursor-pointer ${
             status === 'In Progress'
               ? 'bg-card border-amber-600 shadow-sm ring-1 ring-amber-600'
@@ -141,7 +192,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Resolved (Closed) */}
         <div
-          onClick={() => setStatus('Closed')}
+          onClick={() => handleStatusChange('Closed')}
           className={`p-4 rounded-xl border transition-all cursor-pointer ${
             status === 'Closed'
               ? 'bg-card border-emerald-600 shadow-sm ring-1 ring-emerald-600'
@@ -165,11 +216,11 @@ export const DashboardPage: React.FC = () => {
       <div className="bg-card p-3 rounded-2xl border border-line shadow-card flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         <StatusFilter
           activeStatus={status}
-          onChange={setStatus}
+          onChange={handleStatusChange}
           counts={counts}
         />
         <div className="w-full md:w-80">
-          <SearchBar onSearch={setSearch} />
+          <SearchBar defaultValue={search} onSearch={handleSearchChange} />
         </div>
       </div>
 
@@ -177,10 +228,11 @@ export const DashboardPage: React.FC = () => {
       <TicketTable
         tickets={tickets}
         isLoading={isLoading}
-        onClearFilters={() => {
-          setStatus('All');
-          setSearch('');
-        }}
+        isFetching={isFetching}
+        pagination={pagination}
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onClearFilters={handleClearFilters}
       />
     </div>
   );
