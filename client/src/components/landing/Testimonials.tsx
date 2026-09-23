@@ -6,7 +6,7 @@ export const Testimonials: React.FC = () => {
     {
       stars: 5,
       quote:
-        'Supportly reduced our turnaround time from 40 minutes to under 2 minutes during peak GST reconciliation cycles. The automated triage accurately routes technical queries to our engineering on-call without noisy false alarms.',
+        'Supportly reduced our turnaround time from 40 minutes to under 2 minutes during peak GST reconciliation cycles. The automated categorization accurately routes technical queries to our engineering on-call without noisy false alarms.',
       author: 'Aditya Vikram',
       role: 'Head of Customer Experience at KredX India',
       initials: 'AV',

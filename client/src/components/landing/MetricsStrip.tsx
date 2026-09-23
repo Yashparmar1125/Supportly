@@ -10,8 +10,8 @@ export const MetricsStrip: React.FC = () => {
     },
     {
       value: '68%',
-      badge: 'Autonomous',
-      title: 'Autonomous Resolution',
+      badge: 'Automated',
+      title: 'Automated Resolution',
       desc: 'Inquiries fully answered via verified knowledge base embeddings.',
     },
     {
@@ -24,7 +24,7 @@ export const MetricsStrip: React.FC = () => {
       value: '< 45s',
       badge: 'Realtime',
       title: 'First Response Time',
-      desc: 'Instant triage and intelligent routing under one minute guaranteed.',
+      desc: 'Instant categorization and intelligent routing under one minute guaranteed.',
     },
   ];
 

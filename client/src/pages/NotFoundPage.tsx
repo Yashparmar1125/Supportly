@@ -33,7 +33,7 @@ export const NotFoundPage: React.FC = () => {
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80 inline-block" />
               </div>
               <span className="font-mono text-[11px] text-ink/40 tracking-wider font-medium">
-                404_NOT_FOUND.tsx
+                404_NOT_FOUND
               </span>
               <div className="w-10" />
             </div>
@@ -45,7 +45,7 @@ export const NotFoundPage: React.FC = () => {
               </div>
 
               <div className="inline-block px-2.5 py-0.5 mb-3 rounded-full bg-indigo-50 border border-primary/20 text-[11px] font-mono font-bold text-primary">
-                HTTP 404 ERROR
+                404 NOT FOUND
               </div>
 
               <h1 className="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight mb-3">
@@ -76,10 +76,10 @@ export const NotFoundPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Card Footer Telemetry */}
+            {/* Card Footer */}
             <div className="px-6 py-3 border-t border-line/60 bg-canvas/40 flex items-center justify-between text-[11px] font-mono text-ink/40">
-              <span>Supportly CRM v1.1.4</span>
-              <span>Autonomous Route Guard</span>
+              <span>Supportly Help Center</span>
+              <span>Navigation Guard</span>
             </div>
           </div>
         </div>

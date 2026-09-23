@@ -146,7 +146,7 @@ export const DashboardPage: React.FC = () => {
             </div>
           </div>
           <p className="text-xs sm:text-sm text-ink/60 mt-1">
-            Manage customer conversations, triage inbound requests, and track issue resolution.
+            Manage customer conversations, organize incoming requests, and track issue resolution.
           </p>
         </div>
 
@@ -167,11 +167,11 @@ export const DashboardPage: React.FC = () => {
 
       {/* 2. KPI Quick Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-        {/* Total Inbound */}
+        {/* All Tickets */}
         <div
           role="button"
           tabIndex={0}
-          aria-label="Filter by all inbound tickets"
+          aria-label="Filter by all tickets"
           aria-pressed={status === 'All'}
           onClick={() => handleStatusChange('All')}
           onKeyDown={(e) => {
@@ -187,7 +187,7 @@ export const DashboardPage: React.FC = () => {
           }`}
         >
           <div className="flex items-center justify-between text-ink/50 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider">All Inbound</span>
+            <span className="text-xs font-bold uppercase tracking-wider">All Tickets</span>
             <Inbox className="w-4 h-4 text-ink/60" />
           </div>
           <div className="flex items-baseline justify-between">
@@ -230,7 +230,7 @@ export const DashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Active Triage (In Progress) */}
+        {/* In Progress */}
         <div
           role="button"
           tabIndex={0}

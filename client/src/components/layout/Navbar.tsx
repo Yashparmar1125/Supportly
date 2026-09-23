@@ -138,7 +138,7 @@ export const Navbar: React.FC = () => {
                 </Link>
               </div>
 
-              {/* Database Telemetry Footer */}
+              {/* Database Status Footer */}
               <div className="px-4 py-2 bg-canvas/30 border-t border-line flex items-center justify-between text-[11px] text-ink/50">
                 <div className="flex items-center gap-1.5">
                   <Database className="w-3 h-3 text-ink/40" />

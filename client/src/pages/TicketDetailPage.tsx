@@ -248,7 +248,7 @@ export const TicketDetailPage: React.FC = () => {
                   <h3 className="text-sm font-extrabold text-ink flex items-center gap-1.5">
                     AI Response Copilot
                     <span className="text-[10px] font-mono font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full border border-primary/20">
-                      Zero-Shot LLM
+                      AI Assistant
                     </span>
                   </h3>
                   <p className="text-xs text-ink/60">
@@ -275,7 +275,7 @@ export const TicketDetailPage: React.FC = () => {
                   Activity Timeline ({ticket.notes?.length || 0})
                 </h3>
               </div>
-              <span className="text-xs text-ink/40 font-mono">Internal Audit Log</span>
+              <span className="text-xs text-ink/40 font-mono">Ticket History</span>
             </div>
 
             {/* Note Timeline Component */}
@@ -321,7 +321,7 @@ export const TicketDetailPage: React.FC = () => {
                 onChange={(e) => setNewNote(e.target.value)}
                 placeholder={
                   isInternalNote
-                    ? "Type internal investigation findings, mention teammates, or summarize technical triage..."
+                    ? "Type internal investigation findings, mention teammates, or summarize findings and next steps..."
                     : "Draft a formal resolution response to be dispatched to the customer..."
                 }
                 rows={4}
@@ -347,16 +347,16 @@ export const TicketDetailPage: React.FC = () => {
 
         {/* Right Column: Metadata & Details Sidebar (4 cols) */}
         <div className="lg:col-span-4 space-y-5">
-          {/* AI Zero-Touch Triage Card */}
+          {/* AI Ticket Insights Card */}
           <div className="bg-card rounded-2xl shadow-card border border-line p-5 space-y-4">
             <div className="flex items-center justify-between border-b border-line pb-2.5">
               <div className="flex items-center gap-2">
                 <Cpu className="w-4 h-4 text-primary" />
                 <h4 className="text-xs font-bold uppercase tracking-wider text-ink/70">
-                  AI Zero-Touch Triage
+                  AI Ticket Insights
                 </h4>
               </div>
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Triage Verified" />
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="AI Categorized" />
             </div>
 
             <div className="space-y-3 text-xs">
@@ -377,7 +377,7 @@ export const TicketDetailPage: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between py-1 border-t border-line/60">
-                <span className="text-ink/60">Intake Channel</span>
+                <span className="text-ink/60">Support Channel</span>
                 <span className="inline-flex items-center gap-1.5 font-bold text-ink">
                   {getChannelIcon(ticket.channel)}
                   <span>{ticket.channel || 'Web Portal'}</span>
@@ -397,7 +397,7 @@ export const TicketDetailPage: React.FC = () => {
           {/* Ticket State & SLA Updaters */}
           <div className="bg-card rounded-2xl shadow-card border border-line p-5 space-y-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-ink/50 border-b border-line pb-2.5">
-              Triage & SLA Overrides
+              Update Status & Priority
             </h4>
 
             <Select
@@ -406,7 +406,7 @@ export const TicketDetailPage: React.FC = () => {
               onChange={(e) => handleStatusChange(e.target.value as TicketStatus)}
               options={[
                 { label: 'Open (Needs Attention)', value: 'Open' },
-                { label: 'In Progress (Active Triage)', value: 'In Progress' },
+                { label: 'In Progress (Under Review)', value: 'In Progress' },
                 { label: 'Closed (Resolved)', value: 'Closed' },
               ]}
             />

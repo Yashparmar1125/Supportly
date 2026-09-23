@@ -5,17 +5,17 @@ export const HowItWorks: React.FC = () => {
   const steps = [
     {
       num: '01',
-      title: 'Create & Triage',
-      desc: 'Inbound tickets are ingested from email, chat, API, Slack, and WhatsApp. AI extracts intent, urgency, and relevant logs instantly.',
+      title: 'Receive & Organize',
+      desc: 'Tickets are received from email, web portal, chat, and API. AI extracts intent, urgency, and customer sentiment instantly.',
       badgeIcon: <Filter className="w-4 h-4 text-primary shrink-0" />,
-      badgeText: 'Automatic multi-channel intake',
+      badgeText: 'Multi-channel support',
     },
     {
       num: '02',
       title: 'Track & Co-Pilot',
       desc: 'Smart rules assign tickets to specialized squad agents. The co-pilot produces verified draft answers and actions awaiting one-click approval.',
       badgeIcon: <Brain className="w-4 h-4 text-primary shrink-0" />,
-      badgeText: '1-click agent review & override',
+      badgeText: '1-click agent review & reply',
     },
     {
       num: '03',
@@ -37,7 +37,7 @@ export const HowItWorks: React.FC = () => {
             How Supportly works
           </h2>
           <p className="text-base sm:text-lg text-ink/70">
-            From first inbound ping to joyful customer resolution in three friction-free steps.
+            From first customer message to joyful resolution in three easy steps.
           </p>
         </div>
 

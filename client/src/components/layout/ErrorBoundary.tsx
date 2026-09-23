@@ -54,7 +54,7 @@ export class ErrorBoundary extends Component<Props, State> {
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" />
                   </div>
                   <span className="font-mono text-[11px] text-ink/40 font-medium">
-                    RUNTIME_EXCEPTION_RECOVERY
+                    APPLICATION_RECOVERY
                   </span>
                   <div className="w-10" />
                 </div>
@@ -65,11 +65,11 @@ export class ErrorBoundary extends Component<Props, State> {
                   </div>
 
                   <h1 className="text-2xl font-extrabold text-ink tracking-tight mb-2">
-                    Application Error Encountered
+                    Something went wrong
                   </h1>
 
                   <p className="text-sm text-ink/65 leading-relaxed mb-6 max-w-sm mx-auto">
-                    An unexpected render exception was caught by Supportly's boundary. Your unsaved data has been safely isolated.
+                    An unexpected error occurred while displaying this page. Please reload the application or return to your tickets dashboard.
                   </p>
 
                   {this.state.error && (
@@ -101,7 +101,7 @@ export class ErrorBoundary extends Component<Props, State> {
           </main>
 
           <footer className="text-center py-6 text-xs text-ink/40">
-            Supportly Autonomous Resilience Guard
+            Supportly Application Recovery
           </footer>
         </div>
       );

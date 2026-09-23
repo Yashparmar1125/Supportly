@@ -118,7 +118,7 @@ export const Hero: React.FC = () => {
                   </span>
                 </div>
                 <p className="text-xs text-ink/60 mt-0.5">
-                  Manage customer conversations and active triage across all inbound channels
+                  Manage customer conversations and support requests across all channels
                 </p>
               </div>
               <div className="flex items-center gap-2.5">
@@ -286,7 +286,7 @@ export const Hero: React.FC = () => {
                 </p>
               </div>
               <span className="text-xs text-primary font-bold hover:underline shrink-0">
-                View telemetry →
+                View details →
               </span>
             </div>
           </div>

@@ -132,7 +132,7 @@ export const Features: React.FC = () => {
                 Empower agents, don't replace them
               </h3>
               <p className="text-base text-slate-300 max-w-xl leading-relaxed">
-                Supportly seamlessly surfaces relevant customer context, account telemetry, and one-click actions before an agent even begins typing. It's superpowers for your Tier 1 and Tier 2 champions.
+                Supportly seamlessly surfaces relevant customer context, account history, and one-click actions before an agent even begins typing. It gives superpowers to your support team.
               </p>
 
               <div className="flex flex-wrap items-center gap-6 pt-2 text-xs sm:text-sm text-slate-300 font-medium">

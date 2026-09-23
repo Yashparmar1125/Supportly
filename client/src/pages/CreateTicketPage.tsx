@@ -58,7 +58,7 @@ export const CreateTicketPage: React.FC = () => {
         <div className="mb-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eef2ff] text-primary text-xs font-mono font-bold mb-3 border border-primary/20">
             <Sparkles className="w-3.5 h-3.5" />
-            INTERNAL AGENT LOG
+            New Support Ticket
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight">
             Create Support Ticket

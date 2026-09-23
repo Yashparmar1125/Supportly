@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.6] - 2026-09-24
+
+### Human-Centric Terminology & Jargon Elimination
+- **Natural Language & UI Copy Modernization**:
+  - Replaced medical, military, and robotic jargons across all application views and landing copy with standard, friendly customer support CRM terminology.
+  - Replaced `"Zero-Shot LLM"` badge with `"AI Assistant"` on the ticket resolution hub.
+  - Replaced `"AI Zero-Touch Triage"` card title with `"AI Ticket Insights"` and `"Triage Verified"` with `"AI Categorized"`.
+  - Replaced `"Triage & SLA Overrides"` with `"Update Status & Priority"`.
+  - Replaced `"In Progress (Active Triage)"` dropdown status with `"In Progress (Under Review)"`.
+  - Replaced `"All Inbound"` KPI card with `"All Tickets"`.
+  - Replaced `"Intake Channel"` with `"Support Channel"`.
+  - Replaced `"Internal Audit Log"` with `"Ticket History"`.
+  - Replaced `"INTERNAL AGENT LOG"` with `"New Support Ticket"`.
+  - Replaced `"Autonomous Route Guard"` and `"Autonomous Resilience Guard"` with clean, user-friendly navigation and recovery messaging.
+  - Cleaned landing page copy (`Hero.tsx`, `HowItWorks.tsx`, `Features.tsx`, `MetricsStrip.tsx`, `Testimonials.tsx`) to remove references to "account telemetry", "inbound ping", and "autonomous resolution" in favor of natural customer support phrasing.
+
+---
+
 ## [1.1.5] - 2026-09-24
 
 ### Multi-Client Triage, Team Collaboration & Live Sync
