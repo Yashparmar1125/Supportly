@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.7] - 2026-09-24
+
+### Fixed
+- **Dashboard Filter Toolbar Layout & Responsive Wrapping**:
+  - Re-architected the dashboard control toolbar into a balanced, 2-tier layout that prevents awkward wrapping of the Category filter dropdown onto an isolated line.
+  - **Tier 1 (Primary Navigation & Search)**: Status tabs (`All Tickets`, `Open`, `In Progress`, `Closed`) on the left, full-text `SearchBar` on the right with full-width responsiveness on mobile viewports.
+  - **Tier 2 (Attribute Filters & Result Status)**: Refined secondary filter strip with dedicated `Filter:` tag, Priority SLA chip, Category chip, interactive "Clear filters" button, and live ticket count status (`Showing X of Y tickets`).
+  - Added clean subtle divider (`border-t border-line/60`) and imported `X` icon for instantaneous filter dismissal.
+
+---
+
 ## [1.1.6] - 2026-09-24
 
 ### Human-Centric Terminology & Jargon Elimination

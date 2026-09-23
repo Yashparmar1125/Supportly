@@ -17,6 +17,7 @@ import {
   ArrowDown,
   SlidersHorizontal,
   Tag,
+  X,
 } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
@@ -294,52 +295,90 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* 3. Unified Control Toolbar */}
-      <div className="bg-card p-3 rounded-2xl border border-line shadow-card flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-3">
+      <div className="bg-card p-3 sm:p-3.5 rounded-2xl border border-line shadow-card space-y-3">
+        {/* Row 1: Primary Status Tabs & Quick Search */}
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
           <StatusFilter
             activeStatus={status}
             onChange={handleStatusChange}
             counts={counts}
           />
 
-          {/* Priority SLA Filter */}
-          <div className="flex items-center gap-1.5 pl-1 sm:pl-3 sm:border-l border-line text-xs">
-            {getPriorityFilterIcon(priority)}
-            <select
-              value={priority}
-              onChange={(e) => handlePriorityChange(e.target.value as any)}
-              className="bg-canvas border border-line rounded-lg px-2.5 py-1 text-xs font-semibold text-ink focus:outline-none focus:border-primary cursor-pointer hover:border-ink/40 transition-colors"
-              aria-label="Filter by priority SLA"
-            >
-              <option value="All">All Priorities</option>
-              <option value="Urgent">Urgent (2h SLA)</option>
-              <option value="High">High (8h SLA)</option>
-              <option value="Medium">Medium (24h SLA)</option>
-              <option value="Low">Low (48h SLA)</option>
-            </select>
-          </div>
-
-          {/* Category Filter */}
-          <div className="flex items-center gap-1.5 pl-1 sm:pl-3 sm:border-l border-line text-xs">
-            <Tag className="w-3.5 h-3.5 text-ink/50 shrink-0" />
-            <select
-              value={category}
-              onChange={(e) => handleCategoryChange(e.target.value as any)}
-              className="bg-canvas border border-line rounded-lg px-2.5 py-1 text-xs font-semibold text-ink focus:outline-none focus:border-primary cursor-pointer hover:border-ink/40 transition-colors"
-              aria-label="Filter by category"
-            >
-              <option value="All">All Categories</option>
-              <option value="Billing">Billing & Invoices</option>
-              <option value="Technical Bug">Technical Bugs</option>
-              <option value="Feature Request">Feature Requests</option>
-              <option value="Account Access">Account Access</option>
-              <option value="General">General Inquiries</option>
-            </select>
+          <div className="w-full lg:w-80 shrink-0">
+            <SearchBar defaultValue={search} onSearch={handleSearchChange} />
           </div>
         </div>
 
-        <div className="w-full md:w-72">
-          <SearchBar defaultValue={search} onSearch={handleSearchChange} />
+        {/* Row 2: Secondary Filters (Priority & Category) + Active Filter Reset */}
+        <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2.5 border-t border-line/60">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-bold text-ink/50 uppercase tracking-wider flex items-center gap-1.5 mr-1">
+              <SlidersHorizontal className="w-3 h-3 text-ink/40" />
+              Filter:
+            </span>
+
+            {/* Priority SLA Filter */}
+            <div className="flex items-center gap-1.5 bg-canvas px-2.5 py-1 rounded-lg border border-line text-xs">
+              {getPriorityFilterIcon(priority)}
+              <select
+                value={priority}
+                onChange={(e) => handlePriorityChange(e.target.value as any)}
+                className="bg-transparent text-xs font-semibold text-ink focus:outline-none cursor-pointer"
+                aria-label="Filter by priority SLA"
+              >
+                <option value="All">All Priorities</option>
+                <option value="Urgent">Urgent (2h SLA)</option>
+                <option value="High">High (8h SLA)</option>
+                <option value="Medium">Medium (24h SLA)</option>
+                <option value="Low">Low (48h SLA)</option>
+              </select>
+            </div>
+
+            {/* Category Filter */}
+            <div className="flex items-center gap-1.5 bg-canvas px-2.5 py-1 rounded-lg border border-line text-xs">
+              <Tag className="w-3.5 h-3.5 text-ink/50 shrink-0" />
+              <select
+                value={category}
+                onChange={(e) => handleCategoryChange(e.target.value as any)}
+                className="bg-transparent text-xs font-semibold text-ink focus:outline-none cursor-pointer"
+                aria-label="Filter by category"
+              >
+                <option value="All">All Categories</option>
+                <option value="Billing">Billing & Invoices</option>
+                <option value="Technical Bug">Technical Bugs</option>
+                <option value="Feature Request">Feature Requests</option>
+                <option value="Account Access">Account Access</option>
+                <option value="General">General Inquiries</option>
+              </select>
+            </div>
+
+            {/* Active Filters Clear Button */}
+            {(priority !== 'All' || category !== 'All' || search || status !== 'All') && (
+              <button
+                type="button"
+                onClick={handleClearFilters}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-ink/60 hover:text-rose-600 px-2.5 py-1 rounded-md hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
+              >
+                <X className="w-3 h-3" />
+                Clear filters
+              </button>
+            )}
+          </div>
+
+          {/* Result Count Status */}
+          <div className="text-xs text-ink/50 font-medium">
+            {isFetching ? (
+              <span className="inline-flex items-center gap-1.5 text-primary">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping motion-reduce:animate-none" />
+                Updating tickets...
+              </span>
+            ) : (
+              <span>
+                Showing <strong className="text-ink font-semibold">{tickets.length}</strong> of{' '}
+                <strong className="text-ink font-semibold">{pagination?.total ?? counts.all}</strong> tickets
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
