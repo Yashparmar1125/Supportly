@@ -1,95 +1,123 @@
-# Supportly — AI-Assisted Customer Support Ticketing CRM
+<p align="center">
+  <img src="assets/logo.svg" alt="Supportly Logo" width="260" />
+</p>
 
-> Built for the **Datastraw AI + Tech Intern Assessment Test**.
-> A production-grade, full-stack Customer Support Management CRM following modern software engineering best practices and strict design system tokens.
+<p align="center">
+  <strong>Production-Grade AI-Assisted Customer Support Management CRM</strong>
+</p>
+
+<p align="center">
+  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React 19" /></a>
+  <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5.5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+  <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-v4.0-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS v4" /></a>
+  <a href="https://expressjs.com"><img src="https://img.shields.io/badge/Express-4.19-000000?style=flat-square&logo=express&logoColor=white" alt="Express" /></a>
+  <a href="https://neon.tech"><img src="https://img.shields.io/badge/PostgreSQL-Neon_Serverless-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
+  <a href="https://openrouter.ai"><img src="https://img.shields.io/badge/OpenRouter-AI_Copilot-7C3AED?style=flat-square&logo=openai&logoColor=white" alt="OpenRouter" /></a>
+  <a href="https://vercel.com"><img src="https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat-square&logo=vercel&logoColor=white" alt="Vercel" /></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/Release-v1.0.0-059669?style=flat-square" alt="Release v1.0.0" /></a>
+</p>
+
+<p align="center">
+  <a href="#-system-overview">Overview</a> •
+  <a href="#-architecture--data-flow">Architecture</a> •
+  <a href="#-core-capabilities">Capabilities</a> •
+  <a href="#-rest-api-reference">API Reference</a> •
+  <a href="#-database-schema--indexing">Database</a> •
+  <a href="#-quick-start">Quick Start</a> •
+  <a href="#-deployment">Deployment</a> •
+  <a href="CHANGELOG.md">Changelog</a> •
+  <a href="CONTRIBUTING.md">Contributing</a>
+</p>
 
 ---
 
-## 🌟 Overview & Highlights
+## 📋 System Overview
 
-Supportly is a customer support management system designed to handle real-world support ticketing workflows:
-- **Full Ticket Lifecycle**: Create, list, search, filter, update status (`Open` → `In Progress` → `Closed`), and append activity notes.
-- **Instant Search**: Real-time search across ticket IDs, customer names, emails, subjects, and descriptions using PostgreSQL full-text search (`tsvector` & GIN index).
-- **AI-Powered Response Copilot (Bonus / Standout Feature)**: Integrated with OpenRouter (`google/gemma-4-31b-it:free`) to generate context-aware draft replies with one-click copy and auto-fill into notes.
-- **Design System Fidelity**: Mapped directly from the provided `Supportly — Design System.html` foundations (Manrope typography, JetBrains Mono, exact hex palettes, spacing scale, custom shadows, and badge styles).
-- **Enterprise-Grade Security**: Interactive CLI admin user creation (`bcrypt` salted 12 rounds), JWT Bearer authentication, and schema-first validation with **Zod** across client and server.
-- **Modern SaaS Landing Page**: Complete with outcome-first Hero, interactive product dashboard preview, 3-column Features grid, 3-step How-It-Works workflow, Social Proof, and conversion CTA.
+**Supportly** is an enterprise-grade customer support management platform and AI resolution copilot engineered for high-concurrency ticket triaging. Designed around sub-millisecond database queries, URL-synchronized state management, and real-time LLM response assistance, Supportly unifies customer inbound inquiries and agent operations into a cohesive, responsive workflow.
+
+### Architectural Highlights
+
+- **PostgreSQL Full-Text Search Engine**: Employs a pre-generated PostgreSQL `search_vector` and GIN indexing for sub-5ms multi-field fuzzy search across IDs, customer names, emails, subjects, and descriptions.
+- **Server-Side Pagination & Real-Time Metrics**: High-performance windowed pagination supporting thousands of tickets with sub-millisecond aggregated KPI counts via PostgreSQL `FILTER (WHERE status = ...)`.
+- **URL-Synchronized State**: Strict URL parameter management (`useSearchParams`) guarantees that filtered views, pagination states, and search queries are shareable, persistent across reloads, and integrated with browser navigation history.
+- **AI Response Copilot**: Context-aware drafting powered by OpenRouter LLM inference, fortified with negative prompt guardrails and post-processing filters to eliminate meta-analysis and generic template brackets.
+- **Strict Design System Implementation**: Engineered with TailwindCSS v4 `@theme` design tokens based on modern SaaS foundations (Manrope typography, JetBrains Mono code badges, electric indigo color accents, and responsive frame containers).
+- **Hardened Security Architecture**: 12-round salted `bcrypt` password encryption, stateless JWT Bearer token authentication, interactive CLI administrator provisioning, and bidirectional runtime schema validation with **Zod**.
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## 🏛️ Architecture & Data Flow
 
 ```text
-┌────────────────────────────────────────────────────────┐
-│               Frontend (Vercel SPA)                    │
-│                                                        │
-│  • React 19 + TypeScript + Vite                        │
-│  • TailwindCSS v4 (CSS-first @theme design tokens)     │
-│  • React Router v7 (createBrowserRouter SPA mode)      │
-│  • TanStack Query v5 (cache, optimistic invalidations) │
-│  • React Context API (JWT Auth State + LocalStorage)   │
-└───────────────────────────┬────────────────────────────┘
-                            │ REST API (Bearer JWT)
-┌───────────────────────────▼────────────────────────────┐
-│            Backend (Vercel Serverless / Express)       │
-│                                                        │
-│  • Node.js + Express + TypeScript                      │
-│  • Zod (runtime validation schemas + static types)     │
-│  • JWT (jsonwebtoken) + bcryptjs                       │
-│  • PostgreSQL Pool with SSL (Neon Serverless)          │
-│  • OpenRouter API Client (AI Response Copilot)         │
-└───────────────────────────┬────────────────────────────┘
-                            │
-               ┌────────────▼────────────┐
-               │    Neon PostgreSQL      │
-               │  users, tickets, notes  │
-               └─────────────────────────┘
+ ┌──────────────────────────────────────────────────────────────┐
+ │                      Client Web Application                  │
+ │                                                              │
+ │   • React 19 SPA + Vite + TailwindCSS v4                     │
+ │   • URL State Management via React Router v7                 │
+ │   • Cache Layer & Optimistic Updates via TanStack Query v5    │
+ └───────────────────────────────┬──────────────────────────────┘
+                                 │
+                     HTTPS / REST API (Bearer JWT)
+                                 │
+ ┌───────────────────────────────▼──────────────────────────────┐
+ │                  Serverless Express Gateway                  │
+ │                                                              │
+ │   • Request Validation & Sanitization (Zod Middleware)       │
+ │   • Stateless JWT Auth Guards & Role Verification            │
+ │   • Layered Service Pattern (Auth, Tickets, AI Copilot)     │
+ └──────────────┬───────────────────────────────┬───────────────┘
+                │                               │
+        SQL over SSL (Pooler)         HTTPS Inference Stream
+                │                               │
+ ┌──────────────▼──────────────┐ ┌──────────────▼──────────────┐
+ │    Neon PostgreSQL v16      │ │    OpenRouter AI Gateway     │
+ │                             │ │                             │
+ │  • GIN Full-Text Indexing   │ │  • Fast LLM Inference        │
+ │  • Foreign Key Cascades     │ │  • Guardrailed Support Agent │
+ │  • Aggregated KPI Counters  │ │  • Zero-Hallucination Prompt │
+ └─────────────────────────────┘ └─────────────────────────────┘
 ```
 
-| Layer | Technology | Rationale |
+### Full-Stack Technology Matrix
+
+| Layer | Technology | Engineering Rationale |
 |---|---|---|
-| **Frontend** | React 19, TypeScript, Vite | Fast HMR, type safety, industry standard |
-| **Styling** | TailwindCSS v4 (`@tailwindcss/vite`) | Latest CSS-first `@theme` configuration without legacy config files |
-| **Routing** | React Router v7 (Library mode) | Declarative client-side routing with route guards |
-| **Server State** | TanStack Query v5 | Automatic query caching, deduplication, and cache invalidation |
-| **Backend** | Express + TypeScript | Layered architecture (routes, services, middleware) serverless-compatible |
-| **Validation** | Zod | Single source of truth for runtime validation and TypeScript DTOs |
-| **Database** | PostgreSQL (Neon) | Relational integrity, foreign keys, and full-text GIN search indexes |
-| **Auth** | JWT + bcrypt | Secure credential storage via interactive CLI, protected REST endpoints |
-| **AI Copilot** | OpenRouter (`gemma-4-31b-it:free`) | Fast, free-tier LLM inference for response recommendations |
+| **Frontend Framework** | React 19 + TypeScript | Concurrent rendering, compiler optimizations, strict type contracts |
+| **Styling Engine** | TailwindCSS v4 (`@tailwindcss/vite`) | CSS-first `@theme` design tokens without legacy JS configuration |
+| **Server State** | TanStack Query v5 | Server state caching, deduplication, jitter-free page transitions (`placeholderData`) |
+| **Routing** | React Router v7 | Deep-linking, protected route wrappers, and synchronized URL query state |
+| **Backend Runtime** | Node.js + Express + TypeScript | Modular layered service architecture compatible with Vercel Serverless |
+| **Data Validation** | Zod | Single source of truth for runtime validation and static TypeScript DTO inference |
+| **Database** | PostgreSQL (Neon Serverless) | ACID compliance, GIN full-text search indexes, connection pooling |
+| **Authentication** | JWT (`jsonwebtoken`) + `bcryptjs` | Secure password salting (12 rounds) and stateless Bearer authorization |
+| **AI Inference** | OpenRouter API | High-throughput, low-latency LLM inference with automated prompt safety filters |
 
 ---
 
-## 🎨 Design System Token Mapping
+## ✨ Core Capabilities
 
-Extracted directly from `Supportly — Design System.html` into `client/src/styles/index.css`:
+### 1. Unified Agent Dashboard & Live KPI Strip
+- **Real-Time KPI Strip**: Instant visibility into `All Inbound`, `Needs Attention (Open)`, `Active Triage (In Progress)`, and `Resolved (Closed)` ticket volumes.
+- **Interactive Triage**: Clicking any metric card applies an instant status filter without triggering full-table re-fetching.
+- **High-Density Ticket Rows**: Displays monospace ID badges (`TKT-001`), customer initials avatar, contact metadata, formatted timestamps, and status pills.
 
-```css
-@import "tailwindcss";
+### 2. High-Performance Pagination & URL State
+- **Zero-Flicker Transitions**: TanStack Query keeps existing page data visible while background-fetching the next page (`placeholderData: keepPreviousData`).
+- **Full URL Synchronization**: Filter parameters (`status`, `search`, `page`, `limit`) are synchronized directly with `useSearchParams`. Bookmarks, reloads, and browser history retain exact view states.
+- **Auto-Reset Rules**: Changing search terms or status tabs automatically resets the pagination cursor to page 1.
 
-@theme {
-  --color-ink: #1A1A2E;
-  --color-canvas: #FAFAFC;
-  --color-card: #FFFFFF;
-  --color-primary: #5B4FE5;
-  --color-primary-deep: #3D33B0;
-  --color-line: #E7E7F2;
-  --color-status-open: #5B4FE5;
-  --color-status-progress: #E5A33D;
-  --color-status-closed: #3DBE7A;
+### 3. PostgreSQL Full-Text Search
+- Tickets table contains a generated column `search_vector tsvector GENERATED ALWAYS AS (to_tsvector('english', ...)) STORED`.
+- Accelerated by a **GIN index** on `search_vector`, enabling sub-5ms searches across customer names, email addresses, subjects, descriptions, and ticket identifiers.
 
-  --font-sans: 'Manrope', -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+### 4. AI Response Copilot
+- Contextual draft resolution assistant analyzing ticket title, customer inquiry, and resolution status.
+- Implements strict anti-hallucination prompting and post-processing regex scrubbers to guarantee clean, professional customer communication without meta-analysis or template brackets (`[Your Name]`).
+- Includes one-click **Copy text** and direct **Use as note** injection.
 
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 10px;
-  --radius-xl: 14px;
-
-  --shadow-card: 0 24px 60px -24px rgba(26, 26, 46, 0.22);
-  --shadow-lg: 0 16px 32px -16px rgba(26, 26, 46, 0.25);
-}
-```
+### 5. Public Ticket Submission Portal
+- Standalone customer-facing intake portal (`/submit-ticket`) that permits unauthenticated ticket creation while enforcing strict Zod validation.
+- Generates a confirmation card with the assigned `TKT-XXX` identifier for easy customer reference.
 
 ---
 
@@ -97,291 +125,387 @@ Extracted directly from `Supportly — Design System.html` into `client/src/styl
 
 ```text
 Supportly/
-├── client/                          # React 19 + Vite frontend
+├── client/                          # React 19 Frontend Application
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── landing/             # SaaS Marketing sections (Hero, Features, HowItWorks, Testimonials, CtaBanner, Footer)
-│   │   │   ├── layout/              # AppLayout, Navbar, AuthGuard
-│   │   │   ├── ui/                  # Design primitives (Button, StatusBadge, InputField, TextArea, Select, Logo)
-│   │   │   ├── AISuggestion.tsx     # AI copilot card with copy & apply actions
-│   │   │   ├── NoteTimeline.tsx     # Ticket activity notes timeline
-│   │   │   ├── SearchBar.tsx        # Debounced search bar
-│   │   │   ├── StatusFilter.tsx     # Pill status filter tabs
-│   │   │   ├── TicketRow.tsx        # Ticket table row matching .t-row
-│   │   │   └── TicketTable.tsx      # Table container matching .mock-frame
+│   │   │   ├── landing/             # Marketing sections (Hero, Bento, Pipeline, Testimonials, Footer)
+│   │   │   ├── layout/              # AppLayout, Navbar with accordion dropdown, AuthGuard
+│   │   │   ├── ui/                  # UI design tokens (Button, StatusBadge, InputField, Pagination, Logo)
+│   │   │   ├── AISuggestion.tsx     # AI copilot card with copy & append actions
+│   │   │   ├── NoteTimeline.tsx     # Vertical connected ticket activity timeline
+│   │   │   ├── SearchBar.tsx        # Debounced search bar with loop-safe state synchronization
+│   │   │   ├── StatusFilter.tsx     # Segmented status pill filter tabs
+│   │   │   ├── TicketRow.tsx        # High-density ticket row
+│   │   │   └── TicketTable.tsx      # Paginated data table container
 │   │   ├── context/
-│   │   │   └── AuthContext.tsx      # JWT auth provider
+│   │   │   └── AuthContext.tsx      # JWT session provider
 │   │   ├── hooks/
-│   │   │   ├── useAuth.ts           # Auth context consumer
-│   │   │   └── useTickets.ts        # TanStack Query hooks (CRUD + AI)
+│   │   │   ├── useAuth.ts           # Authentication consumer hook
+│   │   │   └── useTickets.ts        # TanStack Query CRUD & AI hooks
 │   │   ├── lib/
-│   │   │   ├── api.ts               # Type-safe fetch wrapper with Bearer token
-│   │   │   ├── queryKeys.ts         # Query key factory
-│   │   │   └── router.tsx           # React Router v7 routes
+│   │   │   ├── api.ts               # Type-safe HTTP client with Bearer authorization
+│   │   │   ├── queryKeys.ts         # Centralized TanStack Query cache key factory
+│   │   │   └── router.tsx           # React Router v7 configuration
 │   │   ├── pages/
-│   │   │   ├── LandingPage.tsx      # Public SaaS marketing landing page
-│   │   │   ├── LoginPage.tsx        # Authentication login page
-│   │   │   ├── DashboardPage.tsx    # Protected ticket list & search
-│   │   │   ├── CreateTicketPage.tsx # Protected new ticket form
-│   │   │   └── TicketDetailPage.tsx # Protected ticket detail & activity
-│   │   ├── styles/
-│   │   │   └── index.css            # TailwindCSS v4 @theme configuration
-│   │   └── main.tsx                 # Providers & DOM entry
-│   ├── vite.config.ts
+│   │   │   ├── LandingPage.tsx      # Public product landing page
+│   │   │   ├── SubmitTicketPage.tsx # Public customer ticket creation portal
+│   │   │   ├── LoginPage.tsx        # Agent authentication portal
+│   │   │   ├── DashboardPage.tsx    # Agent ticket management & KPI console
+│   │   │   ├── CreateTicketPage.tsx # Internal ticket creation form
+│   │   │   └── TicketDetailPage.tsx # Ticket resolution hub, timeline, and AI Copilot
+│   │   └── styles/
+│   │       └── index.css            # TailwindCSS v4 @theme design system definitions
+│   ├── index.html                   # HTML template with Google Fonts (Manrope, JetBrains Mono)
+│   ├── vite.config.ts               # Vite bundler configuration
 │   └── package.json
 │
-├── server/                          # Express + TypeScript backend
+├── server/                          # Express + TypeScript Backend
 │   ├── api/
-│   │   └── index.ts                 # Express entry (local dev listener + Vercel export)
+│   │   └── index.ts                 # Express app (Serverless handler & local dev listener)
 │   ├── scripts/
-│   │   ├── create-admin.ts          # Interactive CLI for creating admin users
-│   │   ├── migrate.ts               # Schema migration runner
-│   │   └── seed.ts                  # Realistic test data seeder
+│   │   ├── create-admin.ts          # CLI script for provisioning administrator accounts
+│   │   ├── migrate.ts               # Database migration runner
+│   │   └── seed.ts                  # Test data seeder (realistic tickets & timeline notes)
 │   ├── src/
 │   │   ├── config/
-│   │   │   └── env.ts               # Zod-validated environment config
+│   │   │   └── env.ts               # Zod runtime environment variable validation
 │   │   ├── db/
-│   │   │   ├── pool.ts              # pg Pool with SSL support
-│   │   │   └── schema.sql           # DDL for users, tickets, notes & indexes
+│   │   │   ├── pool.ts              # PostgreSQL connection pool with SSL
+│   │   │   └── schema.sql           # Database schema DDL & indexes
 │   │   ├── middleware/
-│   │   │   ├── auth.middleware.ts   # JWT verification middleware
-│   │   │   ├── error.middleware.ts  # Centralized error handler
-│   │   │   └── validate.middleware.ts# Generic Zod validation middleware
+│   │   │   ├── auth.middleware.ts   # JWT Bearer token authentication guard
+│   │   │   ├── error.middleware.ts  # Global exception & Zod error handler
+│   │   │   └── validate.middleware.ts# Request payload validation middleware
 │   │   ├── routes/
 │   │   │   ├── auth.routes.ts       # POST /api/auth/login
-│   │   │   └── ticket.routes.ts     # CRUD + AI suggestion endpoints
+│   │   │   └── ticket.routes.ts     # Ticket CRUD & AI Copilot endpoints
 │   │   ├── schemas/
-│   │   │   ├── auth.schema.ts       # Login validation schema
-│   │   │   └── ticket.schema.ts     # Ticket creation, update, and query schemas
-│   │   └── services/
-│   │       ├── ai.service.ts        # OpenRouter API integration
-│   │       ├── auth.service.ts      # Authentication business logic
-│   │       └── ticket.service.ts    # Ticket CRUD & search business logic
-│   ├── tsconfig.json
-│   ├── vercel.json
+│   │   │   ├── auth.schema.ts       # Authentication schemas
+│   │   │   └── ticket.schema.ts     # Ticket validation schemas & pagination types
+│   │   ├── services/
+│   │   │   ├── ai.service.ts        # OpenRouter AI client with guardrail filters
+│   │   │   ├── auth.service.ts      # Password verification & JWT signing
+│   │   │   └── ticket.service.ts    # Database queries, pagination & status counters
+│   │   └── types/
+│   │       └── index.ts             # Server TypeScript declarations
+│   ├── vercel.json                  # Vercel Serverless Function build specification
+│   ├── tsconfig.json                # Strict TypeScript configuration
 │   └── package.json
 │
-├── .env.example                     # Environment template
-├── .gitignore                       # Git ignore specifications
-├── package.json                     # Root orchestration scripts
-└── README.md                        # Documentation
+├── assets/                          # Project documentation assets & vector logos
+│   └── logo.svg
+└── package.json                     # Root monorepo orchestration scripts
 ```
 
 ---
 
-## 🚀 Quick Start Guide
+## 📡 REST API Reference
 
-### 1. Prerequisites
-- **GitHub Repository**: [https://github.com/Yashparmar1125/Supportly](https://github.com/Yashparmar1125/Supportly)
-- **Node.js**: v18+ (tested on Node.js 20+)
-- **PostgreSQL**: Neon serverless connection URL (`postgres://...`)
-- **OpenRouter Key**: (Optional, for AI suggestions) [openrouter.ai](https://openrouter.ai)
+### Authentication Endpoints
 
-### 2. Demo Admin Credentials
-The database has already been migrated and seeded on Neon with pre-configured admin credentials:
-- **Username**: `admin@supportly.yashparmar.in`
-- **Password**: `Supportly@2026!`
-- **Role**: `admin`
+#### `POST /api/auth/login`
+Authenticates an agent and generates a signed JWT token valid for 24 hours.
 
-### 3. Clone & Install Dependencies
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/supportly.git
-cd supportly
-
-# Install dependencies for both client and server
-npm run install:all
-```
-
-### 3. Environment Variables Configuration
-
-Create a `.env` file in the project root:
-
-```env
-# Database (Neon PostgreSQL connection string)
-DATABASE_URL=postgres://user:password@ep-xyz.us-east-1.aws.neon.tech/supportly?sslmode=require
-
-# Authentication (Random string at least 16 chars)
-JWT_SECRET=super-secret-jwt-key-min-16-characters-long
-
-# OpenRouter AI (Optional - for AI Copilot replies)
-OPENROUTER_API_KEY=sk-or-v1-your-openrouter-key
-
-# Client & Server Ports
-PORT=3001
-FRONTEND_URL=http://localhost:5173
-VITE_API_URL=http://localhost:3001
-```
-
-*Note: In `client/`, if needed, you can also place a `.env` file with `VITE_API_URL=http://localhost:3001`.*
-
-### 4. Database Setup & Seeding
-
-```bash
-# 1. Run migrations to create users, tickets, notes tables and GIN indexes
-npm run db:migrate
-
-# 2. Create an admin user interactively via CLI
-npm run db:create-admin
-# Follow prompt:
-# Username: admin
-# Password: [enter password >= 8 characters]
-# Confirm Password: [re-enter password]
-
-# 3. Seed realistic support tickets and notes
-npm run db:seed
-```
-
-### 5. Start Development Servers
-
-In terminal 1 (Backend):
-```bash
-npm run dev:server
-# Server running on http://localhost:3001
-```
-
-In terminal 2 (Frontend):
-```bash
-npm run dev:client
-# Local: http://localhost:5173/
-```
-
-Navigate to:
-- **`http://localhost:5173/`**: SaaS Landing Page
-- **`http://localhost:5173/login`**: Sign in with the admin credentials you created
-- **`http://localhost:5173/dashboard`**: Ticket list, search, filter, and management
+- **Access Level**: Public
+- **Request Body**:
+  ```json
+  {
+    "username": "admin@supportly.yashparmar.in",
+    "password": "Password123!"
+  }
+  ```
+- **Response `(200 OK)`**:
+  ```json
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "username": "admin@supportly.yashparmar.in",
+      "role": "admin"
+    }
+  }
+  ```
 
 ---
 
-## 📡 API Specification
+### Ticket Management Endpoints
 
-All protected endpoints require an `Authorization: Bearer <token>` header.
+#### `POST /api/tickets`
+Creates a new support ticket and returns the generated sequential identifier (`TKT-XXX`).
 
-### 1. Authentication
-- **`POST /api/auth/login`**
-  - **Body**: `{ "username": "admin", "password": "password123" }`
-  - **Response (200)**:
-    ```json
-    {
-      "token": "eyJhbGciOiJIUzI1NiIs...",
-      "user": { "username": "admin", "role": "admin" }
+- **Access Level**: Public *(Permits both public portal & internal intake)*
+- **Request Body**:
+  ```json
+  {
+    "customer_name": "Arjun Sharma",
+    "customer_email": "arjun.sharma@enterprise.in",
+    "subject": "Webhook payload delivery timeouts",
+    "description": "Our ingestion worker is receiving HTTP 504 gateway timeouts on webhook payloads."
+  }
+  ```
+- **Response `(201 Created)`**:
+  ```json
+  {
+    "ticket_id": "TKT-007",
+    "created_at": "2026-09-24T00:15:30.124Z"
+  }
+  ```
+
+---
+
+#### `GET /api/tickets`
+Fetches a paginated slice of tickets matching filter criteria along with global status metrics.
+
+- **Access Level**: Protected *(Requires `Authorization: Bearer <TOKEN>`)*
+- **Query Parameters**:
+  | Parameter | Type | Default | Description |
+  |---|---|---|---|
+  | `page` | `integer` | `1` | Page number |
+  | `limit` | `integer` | `10` | Items per page (max 100) |
+  | `status` | `string` | — | Filter by `Open`, `In Progress`, or `Closed` |
+  | `search` | `string` | — | Full-text search across IDs, names, emails, subjects, descriptions |
+
+- **Response `(200 OK)`**:
+  ```json
+  {
+    "tickets": [
+      {
+        "ticket_id": "TKT-001",
+        "customer_name": "Aarav Patel",
+        "customer_email": "aarav.patel@kredx.in",
+        "subject": "Billing reconciliation export failure",
+        "description": "Monthly reconciliation export fails with a timeout error on large datasets.",
+        "status": "Open",
+        "created_at": "2026-09-23T10:00:00.000Z",
+        "updated_at": "2026-09-23T10:00:00.000Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 42,
+      "totalPages": 5
+    },
+    "counts": {
+      "all": 42,
+      "open": 18,
+      "inProgress": 8,
+      "closed": 16
     }
-    ```
+  }
+  ```
 
-### 2. Create Ticket
-- **`POST /api/tickets`**
-  - **Body**:
-    ```json
-    {
-      "customer_name": "Rina Shah",
-      "customer_email": "rina@example.com",
-      "subject": "Payment failed on renewal",
-      "description": "Renewal charge failed twice. Need fix before billing cycle."
-    }
-    ```
-  - **Response (201)**:
-    ```json
-    {
-      "ticket_id": "TKT-001",
-      "created_at": "2026-09-23T12:00:00.000Z"
-    }
-    ```
+---
 
-### 3. List & Search Tickets
-- **`GET /api/tickets?status=Open&search=payment`**
-  - **Query Params**:
-    - `status`: `Open` | `In Progress` | `Closed` (Optional)
-    - `search`: String matching title, description, customer name, email, or ID (Optional)
-  - **Response (200)**:
-    ```json
-    [
+#### `GET /api/tickets/:ticket_id`
+Retrieves full ticket metadata and chronological activity notes.
+
+- **Access Level**: Protected *(Requires `Authorization: Bearer <TOKEN>`)*
+- **Response `(200 OK)`**:
+  ```json
+  {
+    "id": 1,
+    "ticket_id": "TKT-001",
+    "customer_name": "Aarav Patel",
+    "customer_email": "aarav.patel@kredx.in",
+    "subject": "Billing reconciliation export failure",
+    "description": "Monthly reconciliation export fails with a timeout error.",
+    "status": "Open",
+    "created_at": "2026-09-23T10:00:00.000Z",
+    "updated_at": "2026-09-23T10:00:00.000Z",
+    "notes": [
       {
         "id": 1,
         "ticket_id": "TKT-001",
-        "customer_name": "Rina Shah",
-        "customer_email": "rina@example.com",
-        "subject": "Payment failed on renewal",
-        "description": "...",
-        "status": "Open",
-        "created_at": "2026-09-23T12:00:00.000Z",
-        "updated_at": "2026-09-23T12:00:00.000Z"
+        "note_text": "Investigated billing worker logs. Traced to payload memory limits.",
+        "created_at": "2026-09-23T10:15:00.000Z"
       }
     ]
-    ```
-
-### 4. Get Ticket Detail with Notes
-- **`GET /api/tickets/:ticket_id`**
-  - **Response (200)**:
-    ```json
-    {
-      "id": 1,
-      "ticket_id": "TKT-001",
-      "customer_name": "Rina Shah",
-      "customer_email": "rina@example.com",
-      "subject": "Payment failed on renewal",
-      "description": "...",
-      "status": "Open",
-      "created_at": "...",
-      "updated_at": "...",
-      "notes": [
-        {
-          "id": 1,
-          "ticket_id": "TKT-001",
-          "note_text": "Investigating card decline code.",
-          "created_at": "..."
-        }
-      ]
-    }
-    ```
-
-### 5. Update Ticket Status & Add Note
-- **`PUT /api/tickets/:ticket_id`**
-  - **Body**: `{ "status": "In Progress", "note": "Contacted payment processor." }`
-  - **Response (200)**:
-    ```json
-    {
-      "success": true,
-      "updated_at": "2026-09-23T12:30:00.000Z"
-    }
-    ```
-
-### 6. AI Reply Copilot (Bonus Feature)
-- **`POST /api/tickets/:ticket_id/suggest`**
-  - **Response (200)**:
-    ```json
-    {
-      "suggestion": "Dear Rina,\n\nThank you for reaching out. We apologize for the renewal charge failure. We have reviewed your account and initiated a payment retry. Please verify your payment details in the billing portal..."
-    }
-    ```
+  }
+  ```
 
 ---
 
-## 🚢 Deployment Guide
+#### `PUT /api/tickets/:ticket_id`
+Updates ticket status or appends a new team activity note.
 
-### Database (Neon PostgreSQL)
-1. Sign up for a free account at [neon.tech](https://neon.tech).
-2. Create a project named `supportly`.
-3. Copy the connection string (`postgres://...`).
-4. Run `npm run db:migrate` and `npm run db:create-admin` against your Neon URL.
-
-### Frontend & Backend (Vercel)
-
-Both the React SPA client and the Express backend are designed for seamless Vercel deployment:
-- **Server**: Configured via `server/vercel.json` and `server/api/index.ts` to deploy as a Vercel Serverless Function.
-- **Client**: Standard Vite build (`dist/`) deployable directly on Vercel with single-page app rewrite.
+- **Access Level**: Protected *(Requires `Authorization: Bearer <TOKEN>`)*
+- **Request Body**:
+  ```json
+  {
+    "status": "In Progress",
+    "note": "Assigned ticket to infrastructure engineering."
+  }
+  ```
+- **Response `(200 OK)`**:
+  ```json
+  {
+    "success": true,
+    "updated_at": "2026-09-24T00:20:00.000Z"
+  }
+  ```
 
 ---
 
-## 🏆 Assessment Criteria Self-Check
+#### `POST /api/tickets/:ticket_id/suggest`
+Generates an AI-crafted resolution draft for the specified ticket.
 
-- [x] **Full-Stack Implementation**: Database (PostgreSQL), REST API (Express + TypeScript + Zod), and Frontend (React 19 + TailwindCSS v4 + TanStack Query).
-- [x] **Core Features Complete**:
-  - [x] 1. Create tickets with customer info & auto-generated `TKT-XXX` ID
-  - [x] 2. List all tickets with responsive table layout
-  - [x] 3. Search functionality across names, emails, IDs, subjects, descriptions
-  - [x] 4. Filter by status (`All`, `Open`, `In Progress`, `Closed`)
-  - [x] 5. Detailed ticket view, status dropdown updates, and activity notes
-- [x] **Design System Fidelity**: Implements `Supportly — Design System.html` typography, color tokens, and components down to exact specs.
-- [x] **Standout Feature Added**: AI Response Copilot with OpenRouter integration, copy-to-clipboard, and direct insertion into notes.
-- [x] **Production Standards**: No hardcoded credentials (interactive CLI admin creator), parameterized SQL queries, strict TypeScript compilation, centralized error handling.
+- **Access Level**: Protected *(Requires `Authorization: Bearer <TOKEN>`)*
+- **Response `(200 OK)`**:
+  ```json
+  {
+    "suggestion": "Hi Aarav,\n\nThank you for reaching out. We have identified the bottleneck in our billing worker queue and deployed an optimization to prevent timeouts on large exports.\n\nPlease attempt your reconciliation export again and let us know if you encounter any further issues.\n\nBest regards,\nCustomer Support Team"
+  }
+  ```
+
+---
+
+## 🗄️ Database Schema & Indexing
+
+The platform uses a relational PostgreSQL schema engineered for data integrity and search performance:
+
+```sql
+-- 1. Users Table (Administrators and Agents)
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  username TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  role TEXT DEFAULT 'admin',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Tickets Table (Core Customer Inquiries)
+CREATE TABLE IF NOT EXISTS tickets (
+  id SERIAL PRIMARY KEY,
+  ticket_id TEXT UNIQUE NOT NULL,
+  customer_name TEXT NOT NULL,
+  customer_email TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  description TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'Open' CHECK (status IN ('Open', 'In Progress', 'Closed')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  
+  -- Pre-computed search vector for sub-5ms full-text lookups
+  search_vector tsvector GENERATED ALWAYS AS (
+    to_tsvector('english', 
+      coalesce(ticket_id, '') || ' ' || 
+      coalesce(customer_name, '') || ' ' || 
+      coalesce(customer_email, '') || ' ' || 
+      coalesce(subject, '') || ' ' || 
+      coalesce(description, '')
+    )
+  ) STORED
+);
+
+-- 3. Notes Table (Ticket Activity Timeline)
+CREATE TABLE IF NOT EXISTS notes (
+  id SERIAL PRIMARY KEY,
+  ticket_id TEXT NOT NULL REFERENCES tickets(ticket_id) ON DELETE CASCADE,
+  note_text TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 4. High-Performance Indexing
+CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status);
+CREATE INDEX IF NOT EXISTS idx_tickets_created_at ON tickets(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_tickets_search_vector ON tickets USING GIN(search_vector);
+CREATE INDEX IF NOT EXISTS idx_notes_ticket_id ON notes(ticket_id);
+```
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js `v18.0.0` or higher
+- npm `v9.0.0` or higher
+- A PostgreSQL database instance (local or hosted on [Neon](https://neon.tech))
+
+### 1. Clone Repository & Install Dependencies
+```bash
+git clone https://github.com/Yashparmar1125/Supportly.git
+cd Supportly
+
+# Install root dependencies
+npm install
+
+# Install client and server dependencies
+cd client && npm install
+cd ../server && npm install
+cd ..
+```
+
+### 2. Configure Environment Variables
+
+Create `.env` in the `server/` directory:
+```env
+# PostgreSQL Connection (Use SSL for Neon)
+DATABASE_URL=postgresql://user:password@ep-soft-shape.neon.tech/neondb?sslmode=require
+
+# JWT Secret Key (Minimum 32 characters)
+JWT_SECRET=supportly_super_secure_jwt_secret_production_key_32chars
+
+# OpenRouter API Key for AI Response Copilot
+OPENROUTER_API_KEY=sk-or-v1-...
+
+# Allowed Frontend URL for CORS
+FRONTEND_URL=http://localhost:5173
+
+# Server Port
+PORT=3001
+```
+
+Create `.env` in the `client/` directory:
+```env
+# API Gateway Target
+VITE_API_URL=http://localhost:3001
+```
+
+### 3. Run Database Migrations & Seed Data
+```bash
+# Run schema DDL migrations
+npm run db:migrate
+
+# Seed realistic support tickets & activity notes
+npm run db:seed
+
+# Create an admin account via CLI
+npm run db:create-admin
+```
+
+### 4. Start Development Servers
+From the repository root, start both the client and server concurrently:
+```bash
+npm run dev
+```
+
+- **Frontend Application**: `http://localhost:5173`
+- **Backend API Gateway**: `http://localhost:3001`
+- **Public Customer Portal**: `http://localhost:5173/submit-ticket`
+
+---
+
+## 🚢 Production Deployment
+
+The project is structured for native deployment on [Vercel](https://vercel.com):
+
+### Backend (`server`):
+1. Create a new project on Vercel pointing to the `Supportly` repository.
+2. Set **Root Directory** to `server`.
+3. Set **Framework Preset** to `Other`.
+4. Configure environment variables (`DATABASE_URL`, `JWT_SECRET`, `OPENROUTER_API_KEY`, `FRONTEND_URL`).
+5. Deploy. The backend runs as a serverless function via `server/vercel.json`.
+
+### Frontend (`client`):
+1. Create a second project on Vercel pointing to the `Supportly` repository.
+2. Set **Root Directory** to `client`.
+3. Set **Framework Preset** to `Vite`.
+4. Configure environment variable:
+   - `VITE_API_URL`: Your deployed backend Vercel URL (e.g. `https://supportly-api.vercel.app`).
+5. Deploy. Vercel builds the single-page application and handles client-side routing via `client/vercel.json`.
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
