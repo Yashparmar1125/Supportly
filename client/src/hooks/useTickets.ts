@@ -4,6 +4,8 @@ import { queryKeys } from '../lib/queryKeys';
 import type {
   TicketDetail,
   TicketStatus,
+  TicketPriority,
+  TicketCategory,
   CreateTicketResponse,
   UpdateTicketResponse,
   AISuggestionResponse,
@@ -13,6 +15,8 @@ import type {
 export const useTickets = (
   filters: {
     status?: string;
+    priority?: string;
+    category?: string;
     search?: string;
     page?: number;
     limit?: number;
@@ -23,6 +27,8 @@ export const useTickets = (
     queryFn: () =>
       apiClient.get<PaginatedTicketsResponse>('/api/tickets', {
         ...(filters.status && filters.status !== 'All' ? { status: filters.status } : {}),
+        ...(filters.priority && filters.priority !== 'All' ? { priority: filters.priority } : {}),
+        ...(filters.category && filters.category !== 'All' ? { category: filters.category } : {}),
         ...(filters.search ? { search: filters.search } : {}),
         ...(filters.page ? { page: String(filters.page) } : {}),
         ...(filters.limit ? { limit: String(filters.limit) } : {}),
@@ -47,6 +53,10 @@ export const useCreateTicket = () => {
       customer_email: string;
       subject: string;
       description: string;
+      priority?: TicketPriority;
+      category?: TicketCategory;
+      channel?: string;
+      organization?: string;
     }) => apiClient.post<CreateTicketResponse>('/api/tickets', data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: queryKeys.tickets });
@@ -63,6 +73,8 @@ export const useUpdateTicket = () => {
     }: {
       ticketId: string;
       status?: TicketStatus;
+      priority?: TicketPriority;
+      category?: TicketCategory;
       note?: string;
     }) => apiClient.put<UpdateTicketResponse>(`/api/tickets/${ticketId}`, data),
     onSuccess: (_data, variables) => {

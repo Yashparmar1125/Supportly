@@ -1,4 +1,8 @@
 export type TicketStatus = 'Open' | 'In Progress' | 'Closed';
+export type TicketPriority = 'Urgent' | 'High' | 'Medium' | 'Low';
+export type TicketCategory = 'Billing' | 'Technical Bug' | 'Feature Request' | 'Account Access' | 'General';
+export type TicketSentiment = 'Frustrated' | 'Neutral' | 'Delighted';
+export type TicketChannel = 'Web Portal' | 'Email' | 'API';
 
 export interface Ticket {
   ticket_id: string;
@@ -7,6 +11,11 @@ export interface Ticket {
   subject: string;
   description: string;
   status: TicketStatus;
+  priority: TicketPriority;
+  category: TicketCategory;
+  sentiment: TicketSentiment;
+  channel: TicketChannel;
+  organization: string;
   created_at: string;
   updated_at: string;
 }
@@ -61,6 +70,11 @@ export interface LoginResponse {
 export interface CreateTicketResponse {
   ticket_id: string;
   created_at: string;
+  priority?: TicketPriority;
+  category?: TicketCategory;
+  sentiment?: TicketSentiment;
+  channel?: TicketChannel;
+  organization?: string;
 }
 
 export interface UpdateTicketResponse {

@@ -5,13 +5,14 @@ import { SearchBar } from '../components/SearchBar';
 import { StatusFilter } from '../components/StatusFilter';
 import { TicketTable } from '../components/TicketTable';
 import { useTickets } from '../hooks/useTickets';
-import type { TicketStatus } from '../types';
+import type { TicketStatus, TicketPriority } from '../types';
 import {
   Plus,
   Inbox,
   Clock,
   CheckCircle2,
   ExternalLink,
+  Flame,
 } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
@@ -24,6 +25,13 @@ export const DashboardPage: React.FC = () => {
     statusParam && ['Open', 'In Progress', 'Closed'].includes(statusParam)
       ? statusParam
       : 'All';
+
+  const priorityParam = searchParams.get('priority') as TicketPriority | null;
+  const priority: TicketPriority | 'All' =
+    priorityParam && ['Urgent', 'High', 'Medium', 'Low'].includes(priorityParam)
+      ? priorityParam
+      : 'All';
+
   const search = searchParams.get('search') || '';
   const page = Math.max(1, Number(searchParams.get('page')) || 1);
   const limit = Math.max(5, Math.min(100, Number(searchParams.get('limit')) || 10));
@@ -31,6 +39,7 @@ export const DashboardPage: React.FC = () => {
   // Query tickets from backend with pagination & filters
   const { data, isLoading, isFetching } = useTickets({
     status: status !== 'All' ? status : undefined,
+    priority: priority !== 'All' ? priority : undefined,
     search: search.trim() || undefined,
     page,
     limit,
@@ -48,7 +57,17 @@ export const DashboardPage: React.FC = () => {
     } else {
       nextParams.delete('status');
     }
-    // Always reset page to 1 when changing status filter
+    nextParams.delete('page');
+    setSearchParams(nextParams, { replace: true });
+  };
+
+  const handlePriorityChange = (newPriority: TicketPriority | 'All') => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (newPriority && newPriority !== 'All') {
+      nextParams.set('priority', newPriority);
+    } else {
+      nextParams.delete('priority');
+    }
     nextParams.delete('page');
     setSearchParams(nextParams, { replace: true });
   };
@@ -61,7 +80,6 @@ export const DashboardPage: React.FC = () => {
     } else {
       nextParams.delete('search');
     }
-    // Always reset page to 1 when changing search query
     nextParams.delete('page');
     setSearchParams(nextParams, { replace: true });
   };
@@ -83,7 +101,7 @@ export const DashboardPage: React.FC = () => {
     } else {
       nextParams.delete('limit');
     }
-    nextParams.delete('page'); // Reset to page 1 on limit change
+    nextParams.delete('page');
     setSearchParams(nextParams);
   };
 
@@ -214,12 +232,32 @@ export const DashboardPage: React.FC = () => {
 
       {/* 3. Unified Control Toolbar */}
       <div className="bg-card p-3 rounded-2xl border border-line shadow-card flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-        <StatusFilter
-          activeStatus={status}
-          onChange={handleStatusChange}
-          counts={counts}
-        />
-        <div className="w-full md:w-80">
+        <div className="flex flex-wrap items-center gap-3">
+          <StatusFilter
+            activeStatus={status}
+            onChange={handleStatusChange}
+            counts={counts}
+          />
+
+          {/* Priority SLA Filter */}
+          <div className="flex items-center gap-1.5 pl-1 sm:pl-3 sm:border-l border-line text-xs">
+            <Flame className="w-3.5 h-3.5 text-rose-500" />
+            <select
+              value={priority}
+              onChange={(e) => handlePriorityChange(e.target.value as any)}
+              className="bg-canvas border border-line rounded-lg px-2.5 py-1 text-xs font-semibold text-ink focus:outline-none focus:border-primary cursor-pointer hover:border-ink/40 transition-colors"
+              aria-label="Filter by priority SLA"
+            >
+              <option value="All">All Priorities</option>
+              <option value="Urgent">🔥 Urgent (2h SLA)</option>
+              <option value="High">⚠️ High (8h SLA)</option>
+              <option value="Medium">⏱️ Medium (24h SLA)</option>
+              <option value="Low">💤 Low (48h SLA)</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="w-full md:w-72">
           <SearchBar defaultValue={search} onSearch={handleSearchChange} />
         </div>
       </div>

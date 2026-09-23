@@ -1,6 +1,126 @@
+import { z } from "zod";
 import { env } from "../config/env.js";
 
+export const ticketTriageResultSchema = z.object({
+  category: z.enum(["Billing", "Technical Bug", "Feature Request", "Account Access", "General"]).default("General"),
+  priority: z.enum(["Urgent", "High", "Medium", "Low"]).default("Medium"),
+  sentiment: z.enum(["Frustrated", "Neutral", "Delighted"]).default("Neutral"),
+});
+
+export type TicketTriageResult = z.infer<typeof ticketTriageResultSchema>;
+
+/**
+ * Deterministic heuristic triage engine providing instant, rule-based fallback
+ */
+function heuristicTriage(subject: string, description: string): TicketTriageResult {
+  const text = `${subject} ${description}`.toLowerCase();
+
+  // Category heuristics
+  let category: TicketTriageResult["category"] = "General";
+  if (/(payment|invoice|bill|charge|refund|subscription|credit card|pricing|renewal|tax|receipt)/i.test(text)) {
+    category = "Billing";
+  } else if (/(bug|error|crash|fail|exception|timeout|500|504|broken|glitch|stack trace|outage)/i.test(text)) {
+    category = "Technical Bug";
+  } else if (/(feature|request|would love|suggestion|add support|integration|roadmap|enhancement)/i.test(text)) {
+    category = "Feature Request";
+  } else if (/(password|login|2fa|mfa|account|reset|unlock|unauthorized|access denied|permission)/i.test(text)) {
+    category = "Account Access";
+  }
+
+  // Priority heuristics
+  let priority: TicketTriageResult["priority"] = "Medium";
+  if (/(asap|emergency|urgent|critical|immediately|down|outage|data loss|breached|production down)/i.test(text)) {
+    priority = "Urgent";
+  } else if (/(high|blocker|cannot work|failing repeatedly|timeout|broken|refund)/i.test(text) || category === "Technical Bug" || category === "Billing") {
+    priority = "High";
+  } else if (category === "Feature Request") {
+    priority = "Low";
+  }
+
+  // Sentiment heuristics
+  let sentiment: TicketTriageResult["sentiment"] = "Neutral";
+  if (/(furious|angry|frustrated|ridiculous|terrible|awful|worst|unacceptable|disappointed|urgent|fail)/i.test(text)) {
+    sentiment = "Frustrated";
+  } else if (/(thank|great|love|awesome|appreciate|helpful|delighted|pleased)/i.test(text)) {
+    sentiment = "Delighted";
+  }
+
+  return { category, priority, sentiment };
+}
+
 export const aiService = {
+  /**
+   * Autonomous Zero-Touch Triage: Extracts category, priority, and sentiment
+   * Guaranteed structured JSON validated by Zod schema
+   */
+  async classifyTicket(subject: string, description: string): Promise<TicketTriageResult> {
+    const fallback = heuristicTriage(subject, description);
+
+    if (!env.OPENROUTER_API_KEY) {
+      return fallback;
+    }
+
+    try {
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": env.FRONTEND_URL || "http://localhost:5173",
+          "X-Title": "Supportly CRM Triage"
+        },
+        body: JSON.stringify({
+          model: "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          models: [
+            "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+            "openrouter/free"
+          ],
+          temperature: 0.1,
+          messages: [
+            {
+              role: "system",
+              content: `You are an AI support ticket classification engine. Analyze the customer support ticket and return ONLY a valid JSON object matching this exact schema:
+{
+  "category": "Billing" | "Technical Bug" | "Feature Request" | "Account Access" | "General",
+  "priority": "Urgent" | "High" | "Medium" | "Low",
+  "sentiment": "Frustrated" | "Neutral" | "Delighted"
+}
+
+RULES:
+1. Category must be one of: "Billing", "Technical Bug", "Feature Request", "Account Access", "General".
+2. Priority must be one of: "Urgent", "High", "Medium", "Low". (Payment issues or breaking crashes are Urgent/High).
+3. Sentiment must be one of: "Frustrated", "Neutral", "Delighted".
+4. OUTPUT ONLY THE RAW JSON OBJECT. No markdown fences, no backticks, no comments, no extra text.`
+            },
+            {
+              role: "user",
+              content: `Subject: ${subject}\nDescription: ${description}`
+            }
+          ]
+        })
+      });
+
+      if (!response.ok) {
+        return fallback;
+      }
+
+      const data = await response.json();
+      let rawContent: string = data.choices?.[0]?.message?.content || "";
+
+      // Extract JSON if wrapped in codeblocks or text
+      const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        return fallback;
+      }
+
+      const parsed = JSON.parse(jsonMatch[0]);
+      return ticketTriageResultSchema.parse(parsed);
+    } catch (error) {
+      console.warn("AI Triage inference error, applying heuristic fallback:", error);
+      return fallback;
+    }
+  },
+
   async getSuggestion(ticket: any) {
     if (!env.OPENROUTER_API_KEY) {
       return "AI suggestions are not configured. Set OPENROUTER_API_KEY in your environment to enable this feature.";

@@ -1,5 +1,20 @@
 import { pool } from "../db/pool.js";
+import { aiService } from "./ai.service.js";
 import type { CreateTicketRequest, UpdateTicketRequest, QueryTicketsRequest } from "../schemas/ticket.schema.js";
+
+function inferOrganization(email: string, explicitOrg?: string): string {
+  if (explicitOrg && explicitOrg.trim()) return explicitOrg.trim();
+  const domain = email.split('@')[1]?.toLowerCase();
+  if (!domain) return 'Individual';
+  if (domain.includes('kredx')) return 'KredX';
+  if (domain.includes('quicksend')) return 'QuickSend';
+  if (domain.includes('cashflow')) return 'CashFlow Neo';
+  if (domain.includes('gmail') || domain.includes('yahoo') || domain.includes('outlook') || domain.includes('hotmail')) {
+    return 'Individual';
+  }
+  const namePart = domain.split('.')[0];
+  return namePart.charAt(0).toUpperCase() + namePart.slice(1);
+}
 
 export const ticketService = {
   async create(data: CreateTicketRequest) {
@@ -14,10 +29,26 @@ export const ticketService = {
       const nextId = (countRes.rows[0].max_id || 0) + 1;
       const ticket_id = `TKT-${nextId.toString().padStart(3, '0')}`;
 
+      // Automated AI Triage & Channel/Org Attribution
+      let priority = data.priority;
+      let category = data.category;
+      let sentiment = 'Neutral';
+
+      if (!priority || !category) {
+        const triage = await aiService.classifyTicket(data.subject, data.description);
+        priority = priority || triage.priority;
+        category = category || triage.category;
+        sentiment = triage.sentiment;
+      }
+
+      const organization = inferOrganization(data.customer_email, data.organization);
+      const channel = data.channel || 'Web Portal';
+
       const res = await client.query(
-        `INSERT INTO tickets (ticket_id, customer_name, customer_email, subject, description)
-         VALUES ($1, $2, $3, $4, $5) RETURNING ticket_id, created_at`,
-        [ticket_id, data.customer_name, data.customer_email, data.subject, data.description]
+        `INSERT INTO tickets (ticket_id, customer_name, customer_email, subject, description, priority, category, sentiment, channel, organization)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+         RETURNING ticket_id, created_at, priority, category, sentiment, channel, organization`,
+        [ticket_id, data.customer_name, data.customer_email, data.subject, data.description, priority, category, sentiment, channel, organization]
       );
       
       await client.query('COMMIT');
@@ -55,6 +86,16 @@ export const ticketService = {
     if (query.status) {
       params.push(query.status);
       whereClause += ` AND status = $${params.length}`;
+    }
+
+    if (query.priority) {
+      params.push(query.priority);
+      whereClause += ` AND priority = $${params.length}`;
+    }
+
+    if (query.category) {
+      params.push(query.category);
+      whereClause += ` AND category = $${params.length}`;
     }
     
     if (query.search) {
@@ -106,11 +147,27 @@ export const ticketService = {
       
       let updated_at = new Date();
 
+      const updates: string[] = ["updated_at = CURRENT_TIMESTAMP"];
+      const updateParams: any[] = [ticket_id];
+
       if (data.status) {
-        const res = await client.query(
-          "UPDATE tickets SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE ticket_id = $2 RETURNING updated_at",
-          [data.status, ticket_id]
-        );
+        updateParams.push(data.status);
+        updates.push(`status = $${updateParams.length}`);
+      }
+
+      if (data.priority) {
+        updateParams.push(data.priority);
+        updates.push(`priority = $${updateParams.length}`);
+      }
+
+      if (data.category) {
+        updateParams.push(data.category);
+        updates.push(`category = $${updateParams.length}`);
+      }
+
+      if (updates.length > 1) {
+        const updateSql = `UPDATE tickets SET ${updates.join(', ')} WHERE ticket_id = $1 RETURNING updated_at`;
+        const res = await client.query(updateSql, updateParams);
         if (res.rows.length === 0) {
           throw new Error("Ticket not found");
         }
