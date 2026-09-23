@@ -9,6 +9,8 @@ import { TextArea } from '../components/ui/TextArea';
 import { NoteTimeline } from '../components/NoteTimeline';
 import { AISuggestion } from '../components/AISuggestion';
 import type { TicketStatus, TicketPriority, TicketCategory } from '../types';
+import { formatDateTime, getInitials } from '../lib/formatters';
+import { getCategoryBadge, getSentimentIcon, getChannelIcon } from '../lib/ticketConfig';
 import {
   ArrowLeft,
   Mail,
@@ -19,17 +21,8 @@ import {
   Sparkles,
   MessageSquare,
   ShieldAlert,
-  Globe,
-  Code2,
-  Smile,
-  Frown,
-  Meh,
   Cpu,
   Building2,
-  CreditCard,
-  Bug,
-  KeyRound,
-  FileText,
 } from 'lucide-react';
 
 export const TicketDetailPage: React.FC = () => {
@@ -95,63 +88,6 @@ export const TicketDetailPage: React.FC = () => {
       { ticketId: ticket.ticket_id, note: newNote.trim() },
       { onSuccess: () => setNewNote('') }
     );
-  };
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const getInitials = (name: string) => {
-    if (!name) return 'CU';
-    const parts = name.trim().split(' ');
-    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  };
-
-  const getSentimentIcon = (sentiment?: string) => {
-    switch (sentiment) {
-      case 'Frustrated':
-        return <Frown className="w-3.5 h-3.5 text-rose-500" />;
-      case 'Delighted':
-        return <Smile className="w-3.5 h-3.5 text-emerald-500" />;
-      case 'Neutral':
-      default:
-        return <Meh className="w-3.5 h-3.5 text-slate-500" />;
-    }
-  };
-
-  const getChannelIcon = (channel?: string) => {
-    switch (channel) {
-      case 'Email':
-        return <Mail className="w-3.5 h-3.5 text-ink/50" />;
-      case 'API':
-        return <Code2 className="w-3.5 h-3.5 text-purple-600" />;
-      case 'Web Portal':
-      default:
-        return <Globe className="w-3.5 h-3.5 text-indigo-500" />;
-    }
-  };
-
-  const getCategoryIcon = (category?: string) => {
-    switch (category) {
-      case 'Billing':
-        return <CreditCard className="w-3.5 h-3.5 text-emerald-600 shrink-0" />;
-      case 'Technical Bug':
-        return <Bug className="w-3.5 h-3.5 text-rose-600 shrink-0" />;
-      case 'Feature Request':
-        return <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />;
-      case 'Account Access':
-        return <KeyRound className="w-3.5 h-3.5 text-indigo-600 shrink-0" />;
-      case 'General':
-      default:
-        return <FileText className="w-3.5 h-3.5 text-slate-500 shrink-0" />;
-    }
   };
 
   return (
@@ -229,7 +165,7 @@ export const TicketDetailPage: React.FC = () => {
                     </span>
                     <span className="text-ink/30">·</span>
                     <span className="font-mono text-[11px] text-ink/50">
-                      {formatDate(ticket.created_at)}
+                      {formatDateTime(ticket.created_at)}
                     </span>
                   </div>
                 </div>
@@ -337,7 +273,7 @@ export const TicketDetailPage: React.FC = () => {
               <div className="flex items-center justify-between py-1">
                 <span className="text-ink/60">Category</span>
                 <span className="inline-flex items-center gap-1.5 font-bold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
-                  {getCategoryIcon(ticket.category)}
+                  {getCategoryBadge(ticket.category).icon}
                   <span>{ticket.category || 'General'}</span>
                 </span>
               </div>
@@ -460,12 +396,12 @@ export const TicketDetailPage: React.FC = () => {
 
             <div className="flex justify-between items-center py-1 border-t border-line/60">
               <span className="text-ink/60">Created</span>
-              <span className="font-mono text-ink/80">{formatDate(ticket.created_at)}</span>
+              <span className="font-mono text-ink/80">{formatDateTime(ticket.created_at)}</span>
             </div>
 
             <div className="flex justify-between items-center py-1 border-t border-line/60">
               <span className="text-ink/60">Last Updated</span>
-              <span className="font-mono text-ink/80">{formatDate(ticket.updated_at)}</span>
+              <span className="font-mono text-ink/80">{formatDateTime(ticket.updated_at)}</span>
             </div>
 
             <div className="flex justify-between items-center py-1 border-t border-line/60">

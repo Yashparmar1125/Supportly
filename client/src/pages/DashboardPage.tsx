@@ -52,60 +52,43 @@ export const DashboardPage: React.FC = () => {
   const pagination = data?.pagination;
   const counts = data?.counts || { all: 0, open: 0, inProgress: 0, closed: 0 };
 
-  // State handlers that synchronize with the URL
-  const handleStatusChange = (newStatus: TicketStatus | 'All') => {
+  // Declarative URL search parameter synchronization helper
+  const updateParams = (
+    updates: Record<string, string | number | null | undefined>,
+    resetPage = true
+  ) => {
     const nextParams = new URLSearchParams(searchParams);
-    if (newStatus && newStatus !== 'All') {
-      nextParams.set('status', newStatus);
-    } else {
-      nextParams.delete('status');
-    }
-    nextParams.delete('page');
+    if (resetPage) nextParams.delete('page');
+
+    Object.entries(updates).forEach(([key, val]) => {
+      if (val === null || val === undefined || val === '' || val === 'All') {
+        nextParams.delete(key);
+      } else {
+        nextParams.set(key, String(val).trim());
+      }
+    });
+
     setSearchParams(nextParams, { replace: true });
+  };
+
+  const handleStatusChange = (newStatus: TicketStatus | 'All') => {
+    updateParams({ status: newStatus });
   };
 
   const handlePriorityChange = (newPriority: TicketPriority | 'All') => {
-    const nextParams = new URLSearchParams(searchParams);
-    if (newPriority && newPriority !== 'All') {
-      nextParams.set('priority', newPriority);
-    } else {
-      nextParams.delete('priority');
-    }
-    nextParams.delete('page');
-    setSearchParams(nextParams, { replace: true });
+    updateParams({ priority: newPriority });
   };
 
   const handleSearchChange = (newSearch: string) => {
-    const nextParams = new URLSearchParams(searchParams);
-    const trimmed = newSearch.trim();
-    if (trimmed) {
-      nextParams.set('search', trimmed);
-    } else {
-      nextParams.delete('search');
-    }
-    nextParams.delete('page');
-    setSearchParams(nextParams, { replace: true });
+    updateParams({ search: newSearch });
   };
 
   const handlePageChange = (newPage: number) => {
-    const nextParams = new URLSearchParams(searchParams);
-    if (newPage > 1) {
-      nextParams.set('page', String(newPage));
-    } else {
-      nextParams.delete('page');
-    }
-    setSearchParams(nextParams);
+    updateParams({ page: newPage > 1 ? newPage : null }, false);
   };
 
   const handleLimitChange = (newLimit: number) => {
-    const nextParams = new URLSearchParams(searchParams);
-    if (newLimit !== 10) {
-      nextParams.set('limit', String(newLimit));
-    } else {
-      nextParams.delete('limit');
-    }
-    nextParams.delete('page');
-    setSearchParams(nextParams);
+    updateParams({ limit: newLimit !== 10 ? newLimit : null });
   };
 
   const handleClearFilters = () => {

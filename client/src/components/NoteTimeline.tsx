@@ -1,20 +1,12 @@
 import React from 'react';
 import type { Note } from '../types';
 import { UserCheck } from 'lucide-react';
+import { formatNoteTime } from '../lib/formatters';
 
 export const NoteTimeline: React.FC<{ notes: Note[] }> = ({ notes }) => {
   if (!notes.length) {
     return <p className="text-sm text-ink/40 py-4">No notes yet.</p>;
   }
-
-  const formatNoteTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 
   return (
     <div className="space-y-4 relative before:absolute before:inset-0 before:left-4 before:w-0.5 before:bg-line/70 before:-z-0">
