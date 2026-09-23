@@ -2,7 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router';
 import type { Ticket } from '../types';
 import { StatusBadge } from './ui/StatusBadge';
-import { ChevronRight, Clock, Mail } from 'lucide-react';
+import { PriorityBadge } from './ui/PriorityBadge';
+import { ChevronRight, Clock, Mail, Globe, Code2 } from 'lucide-react';
 
 export const TicketRow: React.FC<{ ticket: Ticket }> = ({ ticket }) => {
   const navigate = useNavigate();
@@ -34,6 +35,30 @@ export const TicketRow: React.FC<{ ticket: Ticket }> = ({ ticket }) => {
     }
   };
 
+  const getChannelIcon = (channel?: string) => {
+    switch (channel) {
+      case 'Email':
+        return (
+          <span title="Inbound Email">
+            <Mail className="w-3 h-3 text-ink/40" />
+          </span>
+        );
+      case 'API':
+        return (
+          <span title="API Webhook">
+            <Code2 className="w-3 h-3 text-purple-600" />
+          </span>
+        );
+      case 'Web Portal':
+      default:
+        return (
+          <span title="Customer Portal">
+            <Globe className="w-3 h-3 text-indigo-500" />
+          </span>
+        );
+    }
+  };
+
   return (
     <div
       onClick={() => navigate(`/tickets/${ticket.ticket_id}`)}
@@ -46,23 +71,47 @@ export const TicketRow: React.FC<{ ticket: Ticket }> = ({ ticket }) => {
         </span>
       </div>
 
-      {/* 2. Subject & Customer Details */}
+      {/* 2. Subject & Triage Metadata */}
       <div className="min-w-0 pr-2">
-        <div className="flex items-center gap-2">
-          <p className="font-bold text-ink text-sm sm:text-[14.5px] truncate group-hover:text-primary transition-colors">
+        <div className="flex items-center gap-2 flex-wrap">
+          <p className="font-bold text-ink text-sm sm:text-[14.5px] truncate group-hover:text-primary transition-colors max-w-md">
             {ticket.subject}
           </p>
+
+          {/* Priority SLA Badge */}
+          {ticket.priority && (
+            <PriorityBadge priority={ticket.priority} size="sm" />
+          )}
+
+          {/* Category Tag */}
+          {ticket.category && (
+            <span className="hidden md:inline-flex items-center text-[10px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200/80">
+              {ticket.category}
+            </span>
+          )}
         </div>
+
+        {/* Customer & Organization Sub-row */}
         <div className="flex items-center gap-2 text-xs text-ink/60 mt-1 truncate">
-          <div className="flex items-center gap-1.5 font-medium text-ink/80">
+          <div className="flex items-center gap-1.5 font-medium text-ink/80 shrink-0">
             <div className="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[9px] font-bold shrink-0">
               {getInitials(ticket.customer_name)}
             </div>
             <span className="truncate">{ticket.customer_name}</span>
           </div>
+
+          {/* Organization Pill */}
+          {ticket.organization && ticket.organization !== 'Individual' && (
+            <span className="hidden lg:inline-flex items-center px-1.5 py-0.2 rounded bg-indigo-50/80 text-primary font-bold text-[10px] border border-primary/20">
+              {ticket.organization}
+            </span>
+          )}
+
           <span className="text-ink/30 hidden md:inline">·</span>
+
+          {/* Channel Indicator */}
           <div className="hidden md:flex items-center gap-1 text-ink/50 truncate">
-            <Mail className="w-3 h-3 text-ink/40" />
+            {getChannelIcon(ticket.channel)}
             <span className="truncate">{ticket.customer_email}</span>
           </div>
         </div>

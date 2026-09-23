@@ -11,6 +11,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-09-24
+
+### Added
+- **AI Zero-Touch Triage Engine**:
+  - Automated classification on ticket ingestion: extracts `category` (`Billing`, `Technical Bug`, `Feature Request`, `Account Access`, `General`), `priority` (`Urgent`, `High`, `Medium`, `Low`), and `sentiment` (`Frustrated`, `Neutral`, `Delighted`).
+  - Structured output enforced with Zod runtime validation and prompt schemas.
+  - Zero-latency heuristic fallback engine guaranteeing reliable categorization even under AI provider timeout or rate limits.
+- **SLA Countdown & Urgency Management**:
+  - Enforceable SLA resolution windows: Urgent (2h), High (8h), Medium (24h), Low (48h).
+  - High-visibility `PriorityBadge` with dynamic SLA indicator and pulsing urgency dots.
+  - Dashboard priority filter selector (`All Priorities`, `Urgent`, `High`, `Medium`, `Low`) with URL synchronization.
+- **Multi-Client & Channel Attribution**:
+  - Automatic organization clustering derived from verified email domains (`KredX`, `QuickSend`, `CashFlow Neo`, `Acme Corp`).
+  - Channel source tracking (`Web Portal`, `Email Forward`, `API Webhook`) with visual channel icons.
+- **Agent Triage Console**:
+  - Dedicated AI Triage & Client Context panel inside the ticket resolution hub.
+  - Interactive priority and category override controls for agents.
+
+---
+
 ## [1.0.1] - 2026-09-24
 
 ### Changed

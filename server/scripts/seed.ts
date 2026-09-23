@@ -6,45 +6,69 @@ async function seed() {
     console.log("Seeding tickets with realistic support data...");
 
     const t1 = await ticketService.create({
-      customer_name: "Rina Shah",
-      customer_email: "rina@acmecorp.com",
-      subject: "Payment failed on annual renewal",
-      description: "Customer says the renewal charge failed twice with bank decline code 05. Requesting a manual retry before the grace period expires."
+      customer_name: "Aarav Patel",
+      customer_email: "aarav.patel@kredx.in",
+      subject: "Payment failed on annual enterprise renewal",
+      description: "Customer says the renewal charge failed twice with bank decline code 05. Requesting a manual retry before the grace period expires.",
+      category: "Billing",
+      priority: "Urgent",
+      channel: "Email",
+      organization: "KredX"
     });
 
     const t2 = await ticketService.create({
-      customer_name: "Alex Chen",
-      customer_email: "alex.chen@innovate.io",
-      subject: "Can't reset password on mobile",
-      description: "Password reset link sends successfully, but tapping the link inside iOS Safari throws an invalid session token error."
+      customer_name: "Riya Nair",
+      customer_email: "riya.nair@quicksend.in",
+      subject: "Webhook delivery payloads failing with 504 timeout",
+      description: "Our ingestion worker is receiving HTTP 504 gateway timeouts on webhook delivery payloads. Over 2,400 orders pending sync.",
+      category: "Technical Bug",
+      priority: "High",
+      channel: "API",
+      organization: "QuickSend"
     });
 
     const t3 = await ticketService.create({
-      customer_name: "Marcus Vance",
-      customer_email: "m.vance@vancestudio.com",
-      subject: "Refund request for double subscription",
-      description: "Accidentally upgraded to the team tier on two different workspaces. Requesting a cancellation and refund for workspace WS-941."
+      customer_name: "Vikram Mehta",
+      customer_email: "vikram.mehta@cashflow.in",
+      subject: "GST invoice reconciliation report discrepancy",
+      description: "Accidentally generated GST invoice on two different billing entities. Requesting a credit note and updated B2B invoice.",
+      category: "Billing",
+      priority: "High",
+      channel: "Web Portal",
+      organization: "CashFlow Neo"
     });
 
     const t4 = await ticketService.create({
-      customer_name: "Priya Patel",
-      customer_email: "priya@dataflow.dev",
-      subject: "Webhook payloads failing with 504 timeout",
-      description: "Outbound webhooks to our AWS API Gateway endpoint are timing out after 10s. Could you check if outbound payload retries are enabled?"
+      customer_name: "Alex Chen",
+      customer_email: "alex.chen@innovate.io",
+      subject: "Can't reset password on mobile device",
+      description: "Password reset link sends successfully, but tapping the link inside iOS Safari throws an invalid session token error.",
+      category: "Account Access",
+      priority: "Medium",
+      channel: "Web Portal",
+      organization: "Innovate"
     });
 
     const t5 = await ticketService.create({
       customer_name: "David Kim",
       customer_email: "dkim@globalfin.org",
-      subject: "Enterprise SSO SAML integration inquiry",
-      description: "We are onboarding 150 agents and need Okta SAML 2.0 configuration guidelines, metadata URL, and SP entity ID."
+      subject: "Enterprise SSO SAML 2.0 integration guidelines",
+      description: "We are onboarding 150 agents and need Okta SAML 2.0 configuration guidelines, metadata URL, and SP entity ID.",
+      category: "Account Access",
+      priority: "Medium",
+      channel: "Email",
+      organization: "GlobalFin"
     });
 
     const t6 = await ticketService.create({
       customer_name: "Sarah Jenkins",
       customer_email: "sarah@brightpath.co",
-      subject: "Feature request: Dark mode & custom tags",
-      description: "Our night-shift support team would greatly appreciate a dark theme toggle and custom color tags for priority categorization."
+      subject: "Feature request: Custom tag routing & dark mode",
+      description: "Our night-shift support squad would greatly appreciate automated tag routing rules and a dark mode interface toggle.",
+      category: "Feature Request",
+      priority: "Low",
+      channel: "Web Portal",
+      organization: "BrightPath"
     });
 
     console.log("Seeding activity notes...");
@@ -58,22 +82,18 @@ async function seed() {
 
     await ticketService.update(t2.ticket_id, {
       status: "In Progress",
-      note: "Reproduced on iOS 17.4 Safari. Deep-link scheme handler issue identified in client v2.4."
+      note: "Investigated API Gateway error logs. Traced to 10s worker timeout under high traffic burst."
     });
 
     await ticketService.update(t3.ticket_id, {
       status: "Closed",
-      note: "Issued full refund of $240 via Stripe payment refund ID re_3Nq... Closed ticket."
+      note: "Generated credit note CN-2026-904. Sent corrected B2B tax invoice to accounts payable."
     });
 
-    await ticketService.update(t4.ticket_id, {
-      status: "Open",
-      note: "Assigned to backend infrastructure on-call engineer."
-    });
-
-    console.log("Database seeded successfully with authentic support data.");
+    console.log("Database seeded successfully with multi-client triage tickets.");
   } catch (error) {
     console.error("Error seeding database:", error);
+    process.exit(1);
   } finally {
     await pool.end();
   }
