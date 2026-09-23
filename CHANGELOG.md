@@ -11,7 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.0.0] - 2026-09-24
+## [1.0.1] - 2026-09-24
+
+### Changed
+- **Landing Navigation Polish**:
+  - Reduced header vertical height to standard `h-16` (64px) with subtle backdrop blur and soft border styling.
+  - Eliminated redundant duplicate agent login icon button, unifying the action into a clean pill button with integrated user icon.
+  - Added session awareness: automatically displays a `Dashboard` navigation button when authenticated.
+  - Added `How It Works` quick anchor link alongside `Features` in the primary desktop navigation bar.
 
 ### Added
 - **Core Ticketing Engine**:

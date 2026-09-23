@@ -8,47 +8,58 @@ import { CtaBanner } from '../components/landing/CtaBanner';
 import { Footer } from '../components/landing/Footer';
 import { Logo } from '../components/ui/Logo';
 import { Link } from 'react-router';
-import { User as UserIcon } from 'lucide-react';
+import { User as UserIcon, LayoutDashboard, ArrowRight } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 export const LandingPage: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <div className="min-h-screen bg-canvas flex flex-col font-sans">
       {/* Sticky High-End Top Navigation Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-xl border-b border-line shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
-        <div className="h-20 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6">
-          <div className="flex items-center gap-10">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-line shadow-[0_1px_6px_rgba(0,0,0,0.03)] transition-all">
+        <div className="h-16 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6">
+          <div className="flex items-center gap-8">
             <Logo />
-            <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-ink/75">
-              <a href="#features" className="hover:text-primary transition-colors font-semibold">Features</a>
+            <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-ink/70">
+              <a href="#features" className="hover:text-primary transition-colors">Features</a>
+              <a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a>
             </nav>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <Link
               to="/submit-ticket"
-              className="inline-flex items-center justify-center text-xs font-bold text-white bg-primary hover:bg-primary-deep px-4 py-2 rounded-full shadow-[0_3px_12px_rgba(91,80,238,0.3)] transition-all hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center text-xs font-bold text-white bg-primary hover:bg-primary-deep px-4 py-2 rounded-full shadow-[0_3px_12px_rgba(91,80,238,0.25)] transition-all hover:-translate-y-0.5"
             >
               Submit Ticket
             </Link>
-            <Link
-              to="/login"
-              className="inline-flex items-center text-sm font-semibold text-ink/80 hover:text-primary px-3 py-1.5 transition-colors"
-            >
-              Agent Sign in
-            </Link>
-            <Link
-              to="/login"
-              className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
-              title="Agent Login"
-            >
-              <UserIcon className="w-4 h-4" />
-            </Link>
+
+            {isAuthenticated ? (
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-ink/80 hover:text-ink hover:bg-canvas px-3.5 py-2 rounded-full border border-line transition-all shadow-2xs hover:border-ink/30"
+              >
+                <LayoutDashboard className="w-3.5 h-3.5 text-primary" />
+                <span className="hidden sm:inline">Dashboard</span>
+                <span className="sm:hidden">App</span>
+                <ArrowRight className="w-3 h-3 text-ink/40" />
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-ink/75 hover:text-ink hover:bg-canvas px-3.5 py-2 rounded-full border border-line transition-all shadow-2xs hover:border-ink/30"
+              >
+                <UserIcon className="w-3.5 h-3.5 text-primary" />
+                <span>Agent Sign in</span>
+              </Link>
+            )}
           </div>
         </div>
       </header>
 
       {/* Main Stitch Page Sections */}
-      <main className="flex-1 w-full pt-20">
+      <main className="flex-1 w-full pt-16">
         <Hero />
         <MetricsStrip />
         <Features />
