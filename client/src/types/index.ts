@@ -44,7 +44,18 @@ export interface Note {
   id: number;
   ticket_id: string;
   note_text: string;
+  author_name?: string;
+  is_internal?: boolean;
   created_at: string;
+}
+
+export interface TicketFilters {
+  status?: TicketStatus;
+  priority?: TicketPriority;
+  category?: TicketCategory;
+  search?: string;
+  page?: number;
+  limit?: number;
 }
 
 export interface TicketDetail extends Ticket {

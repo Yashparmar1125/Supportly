@@ -34,6 +34,7 @@ export const useTickets = (
         ...(filters.limit ? { limit: String(filters.limit) } : {}),
       }),
     placeholderData: (previousData) => previousData,
+    refetchInterval: 15_000,
   });
 };
 
@@ -76,6 +77,8 @@ export const useUpdateTicket = () => {
       priority?: TicketPriority;
       category?: TicketCategory;
       note?: string;
+      author_name?: string;
+      is_internal?: boolean;
     }) => apiClient.put<UpdateTicketResponse>(`/api/tickets/${ticketId}`, data),
     onSuccess: (_data, variables) => {
       qc.invalidateQueries({ queryKey: queryKeys.tickets });

@@ -38,7 +38,11 @@ router.get("/:ticket_id", authenticate, async (req, res, next) => {
 
 router.put("/:ticket_id", authenticate, validate(updateTicketSchema, "body"), async (req, res, next) => {
   try {
-    const result = await ticketService.update(req.params.ticket_id, req.body);
+    const updatePayload = {
+      ...req.body,
+      author_name: req.body.author_name || req.user?.username || 'Support Agent',
+    };
+    const result = await ticketService.update(req.params.ticket_id, updatePayload);
     res.json(result);
   } catch (error: any) {
     if (error.message === "Ticket not found") {

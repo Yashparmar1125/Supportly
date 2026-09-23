@@ -21,6 +21,8 @@ export const updateTicketSchema = z.object({
   priority: ticketPriorityEnum.optional(),
   category: ticketCategoryEnum.optional(),
   note: z.string().trim().min(1, "Note cannot be empty").max(5000, "Note must not exceed 5,000 characters").optional(),
+  author_name: z.string().trim().max(100, "Author name must not exceed 100 characters").optional(),
+  is_internal: z.boolean().optional(),
 }).refine(data => data.status !== undefined || data.priority !== undefined || data.category !== undefined || data.note !== undefined, {
   message: "At least one field (status, priority, category, note) must be provided"
 });

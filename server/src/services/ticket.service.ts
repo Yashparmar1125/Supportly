@@ -158,9 +158,11 @@ export const ticketService = {
       const updated_at = res.rows[0].updated_at;
 
       if (data.note && data.note.trim()) {
+        const author = data.author_name && data.author_name.trim() ? data.author_name.trim() : 'Support Agent';
+        const isInternal = data.is_internal !== undefined ? Boolean(data.is_internal) : true;
         await client.query(
-          "INSERT INTO notes (ticket_id, note_text) VALUES ($1, $2)",
-          [ticket_id, data.note.trim()]
+          "INSERT INTO notes (ticket_id, note_text, author_name, is_internal) VALUES ($1, $2, $3, $4)",
+          [ticket_id, data.note.trim(), author, isInternal]
         );
       }
       

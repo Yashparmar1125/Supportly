@@ -12,6 +12,7 @@ import type { TicketStatus, TicketPriority, TicketCategory } from '../types';
 import { formatDateTime, getInitials } from '../lib/formatters';
 import { getCategoryBadge, getSentimentIcon, getChannelIcon } from '../lib/ticketConfig';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../hooks/useAuth';
 import {
   ArrowLeft,
   Mail,
@@ -24,18 +25,21 @@ import {
   ShieldAlert,
   Cpu,
   Building2,
+  Lock,
 } from 'lucide-react';
 
 export const TicketDetailPage: React.FC = () => {
   const { ticketId } = useParams<{ ticketId: string }>();
   const navigate = useNavigate();
   const toast = useToast();
+  const { user } = useAuth();
 
   const { data: ticket, isLoading } = useTicket(ticketId!);
   const updateMutation = useUpdateTicket();
   const suggestMutation = useSuggestReply();
 
   const [newNote, setNewNote] = useState('');
+  const [isInternalNote, setIsInternalNote] = useState(true);
 
   if (isLoading) {
     return (
@@ -116,12 +120,18 @@ export const TicketDetailPage: React.FC = () => {
 
   const handleAddNote = () => {
     if (!newNote.trim()) return;
+    const authorName = user?.username || 'Support Agent';
     updateMutation.mutate(
-      { ticketId: ticket.ticket_id, note: newNote.trim() },
+      {
+        ticketId: ticket.ticket_id,
+        note: newNote.trim(),
+        author_name: authorName,
+        is_internal: isInternalNote,
+      },
       {
         onSuccess: () => {
           setNewNote('');
-          toast.success('Note added to timeline');
+          toast.success(isInternalNote ? 'Internal note added to timeline' : 'Customer reply sent and recorded');
         },
         onError: (err: any) => {
           toast.error(err?.message || 'Failed to add note');
@@ -272,23 +282,63 @@ export const TicketDetailPage: React.FC = () => {
             <NoteTimeline notes={ticket.notes || []} />
 
             {/* Post Note Composer */}
-            <div className="pt-4 border-t border-line space-y-3">
+            <div className="pt-4 border-t border-line space-y-3.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <label className="block text-sm font-semibold text-ink">
+                  {isInternalNote ? 'Internal Team Note' : 'Outbound Customer Reply'}
+                </label>
+                <div className="inline-flex p-0.5 rounded-lg bg-canvas border border-line text-xs font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => setIsInternalNote(true)}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                      isInternalNote
+                        ? 'bg-amber-50 text-amber-800 border border-amber-200/80 shadow-2xs font-bold'
+                        : 'text-ink/60 hover:text-ink'
+                    }`}
+                  >
+                    <Lock className="w-3 h-3" />
+                    <span>Internal Note</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsInternalNote(false)}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                      !isInternalNote
+                        ? 'bg-primary text-white shadow-2xs font-bold'
+                        : 'text-ink/60 hover:text-ink'
+                    }`}
+                  >
+                    <MessageSquare className="w-3 h-3" />
+                    <span>Customer Reply</span>
+                  </button>
+                </div>
+              </div>
+
               <TextArea
-                label="Add internal note or customer reply"
+                label=""
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
-                placeholder="Type resolution updates, investigation findings, or drafted email replies..."
+                placeholder={
+                  isInternalNote
+                    ? "Type internal investigation findings, mention teammates, or summarize technical triage..."
+                    : "Draft a formal resolution response to be dispatched to the customer..."
+                }
                 rows={4}
               />
-              <div className="flex items-center justify-between pt-1">
-                <p className="text-[11px] text-ink/40">Notes are visible to agents in this ticket's audit log.</p>
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                <p className="text-[11px] text-ink/50">
+                  {isInternalNote
+                    ? `Private note visible only to support agents (author: ${user?.username || 'you'})`
+                    : `Customer-visible reply tracked on public ticket log (author: ${user?.username || 'you'})`}
+                </p>
                 <Button
                   onClick={handleAddNote}
                   isLoading={updateMutation.isPending}
                   disabled={!newNote.trim()}
                   size="sm"
                 >
-                  Post Note
+                  {isInternalNote ? 'Post Internal Note' : 'Send Customer Reply'}
                 </Button>
               </div>
             </div>

@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.5] - 2026-09-24
+
+### Multi-Client Triage, Team Collaboration & Live Sync
+- **3D Triage with Dashboard Category Filtering**:
+  - Added Category Filter selector dropdown to the dashboard toolbar (`Billing`, `Technical Bug`, `Feature Request`, `Account Access`, `General`).
+  - Completed the 3D triage matrix alongside existing Status tabs and Priority SLA dropdown.
+  - Fully synchronized with URL search query parameters (`?category=...`), resetting page cursor to 1 on filter changes.
+- **Team Collaboration: Note Authorship & Note Types**:
+  - Non-destructively migrated PostgreSQL `notes` table with `author_name TEXT DEFAULT 'Support Agent'` and `is_internal BOOLEAN DEFAULT true`.
+  - Added dual-mode note composer toggle on `TicketDetailPage.tsx`:
+    - 🔒 **Internal Note**: Private team findings and internal triage updates (amber badge, logged by authenticated agent username).
+    - 💬 **Customer Reply**: Outbound customer-facing replies logged to the audit timeline (indigo badge).
+  - Enhanced `NoteTimeline.tsx` with dynamic author initials avatar, author username, relative time (`formatRelativeTime`), and distinct visual classification badges.
+- **Live Auto-Refresh & Real-Time Sync Heartbeat**:
+  - Configured TanStack Query `refetchInterval: 15000` (15s) in `useTickets`, enabling automated background syncing without manual page reloads.
+  - Added a pulsing `Live Sync (15s)` telemetry badge to the dashboard header.
+- **Context-Aware AI Copilot**:
+  - Enhanced OpenRouter prompt generation in `ai.service.ts` to include recent activity history and discussion notes with author attribution and note type markers, enabling contextually aware follow-up replies.
+
+---
+
 ## [1.1.4] - 2026-09-24
 
 ### UI Feedback, Resilience & Health Monitoring
