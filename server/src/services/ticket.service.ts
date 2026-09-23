@@ -18,31 +18,30 @@ function inferOrganization(email: string, explicitOrg?: string): string {
 
 export const ticketService = {
   async create(data: CreateTicketRequest) {
+    // 1. Run AI triage & org attribution OUTSIDE the DB transaction to avoid connection starvation
+    let priority = data.priority;
+    let category = data.category;
+    let sentiment = 'Neutral';
+
+    if (!priority || !category) {
+      const triage = await aiService.classifyTicket(data.subject, data.description);
+      priority = priority || triage.priority;
+      category = category || triage.category;
+      sentiment = triage.sentiment;
+    }
+
+    const organization = inferOrganization(data.customer_email, data.organization);
+    const channel = data.channel || 'Web Portal';
+
+    // 2. Open quick atomic transaction strictly for SQL insert operations (<5ms)
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
       
-      const countRes = await client.query(`
-        SELECT COALESCE(MAX(CAST(SUBSTRING(ticket_id FROM 5) AS INTEGER)), 0) as max_id 
-        FROM tickets
-      `);
-      const nextId = (countRes.rows[0].max_id || 0) + 1;
+      // Atomic sequence prevents race condition and duplicate key collisions
+      const seqRes = await client.query(`SELECT nextval('ticket_id_seq') as next_id`);
+      const nextId = Number(seqRes.rows[0].next_id);
       const ticket_id = `TKT-${nextId.toString().padStart(3, '0')}`;
-
-      // Automated AI Triage & Channel/Org Attribution
-      let priority = data.priority;
-      let category = data.category;
-      let sentiment = 'Neutral';
-
-      if (!priority || !category) {
-        const triage = await aiService.classifyTicket(data.subject, data.description);
-        priority = priority || triage.priority;
-        category = category || triage.category;
-        sentiment = triage.sentiment;
-      }
-
-      const organization = inferOrganization(data.customer_email, data.organization);
-      const channel = data.channel || 'Web Portal';
 
       const res = await client.query(
         `INSERT INTO tickets (ticket_id, customer_name, customer_email, subject, description, priority, category, sentiment, channel, organization)
@@ -145,8 +144,6 @@ export const ticketService = {
     try {
       await client.query('BEGIN');
       
-      let updated_at = new Date();
-
       const updates: string[] = ["updated_at = CURRENT_TIMESTAMP"];
       const updateParams: any[] = [ticket_id];
 
@@ -165,19 +162,18 @@ export const ticketService = {
         updates.push(`category = $${updateParams.length}`);
       }
 
-      if (updates.length > 1) {
-        const updateSql = `UPDATE tickets SET ${updates.join(', ')} WHERE ticket_id = $1 RETURNING updated_at`;
-        const res = await client.query(updateSql, updateParams);
-        if (res.rows.length === 0) {
-          throw new Error("Ticket not found");
-        }
-        updated_at = res.rows[0].updated_at;
+      // Always execute update query to verify ticket exists and refresh updated_at
+      const updateSql = `UPDATE tickets SET ${updates.join(', ')} WHERE ticket_id = $1 RETURNING updated_at`;
+      const res = await client.query(updateSql, updateParams);
+      if (res.rows.length === 0) {
+        throw new Error("Ticket not found");
       }
+      const updated_at = res.rows[0].updated_at;
 
-      if (data.note) {
+      if (data.note && data.note.trim()) {
         await client.query(
           "INSERT INTO notes (ticket_id, note_text) VALUES ($1, $2)",
-          [ticket_id, data.note]
+          [ticket_id, data.note.trim()]
         );
       }
       

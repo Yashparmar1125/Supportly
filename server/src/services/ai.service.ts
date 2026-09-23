@@ -61,8 +61,10 @@ export const aiService = {
     }
 
     try {
+      // Enforce 8-second timeout on LLM network request
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
+        signal: AbortSignal.timeout(8000),
         headers: {
           "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
@@ -94,7 +96,7 @@ RULES:
             },
             {
               role: "user",
-              content: `Subject: ${subject}\nDescription: ${description}`
+              content: `Subject: ${subject.slice(0, 500)}\nDescription: ${description.slice(0, 2000)}`
             }
           ]
         })
@@ -116,7 +118,7 @@ RULES:
       const parsed = JSON.parse(jsonMatch[0]);
       return ticketTriageResultSchema.parse(parsed);
     } catch (error) {
-      console.warn("AI Triage inference error, applying heuristic fallback:", error);
+      console.warn("AI Triage inference error/timeout, applying heuristic fallback:", error);
       return fallback;
     }
   },
@@ -127,8 +129,19 @@ RULES:
     }
 
     try {
+      let userPrompt = `Customer Name: ${ticket.customer_name}\nCustomer Email: ${ticket.customer_email || 'Not provided'}\nTicket Subject: ${ticket.subject}\nCustomer Issue: ${ticket.description}`;
+      if (ticket.notes && Array.isArray(ticket.notes) && ticket.notes.length > 0) {
+        const notesContext = ticket.notes
+          .slice(-5)
+          .map((n: any, idx: number) => `Update ${idx + 1}: ${n.note_text}`)
+          .join('\n');
+        userPrompt += `\n\nRecent Activity & Notes:\n${notesContext}`;
+      }
+
+      // Enforce 10-second timeout on LLM suggestion
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
+        signal: AbortSignal.timeout(10000),
         headers: {
           "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
@@ -157,7 +170,7 @@ Supportly Customer Support`
             },
             {
               role: "user",
-              content: `Customer Name: ${ticket.customer_name}\nCustomer Email: ${ticket.customer_email || 'Not provided'}\nTicket Subject: ${ticket.subject}\nCustomer Issue: ${ticket.description}`
+              content: userPrompt
             }
           ]
         })
@@ -180,7 +193,7 @@ Supportly Customer Support`
 
       return reply.trim() || "Thank you for contacting Supportly. We have received your ticket and our team is actively investigating. We will follow up shortly.";
     } catch (error) {
-      console.error("AI suggestion error:", error);
+      console.error("AI suggestion error or timeout:", error);
       return "AI suggestion service is currently unavailable. Please try again later.";
     }
   }

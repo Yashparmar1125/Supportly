@@ -7,7 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [1.1.2] - 2026-09-24
+
+### Security & Critical Fixes
+- **CORS Vulnerability Resolved**: Fixed unconditional CORS fallthrough and removed arbitrary wildcard matching; origin checks now strictly enforce configured `FRONTEND_URL` and development hosts.
+- **Decoupled AI Inference from Database Transactions**: Moved external OpenRouter HTTP requests and organization inference outside of the PostgreSQL transaction boundary in `ticketService.create()`, preventing pool connection starvation.
+- **Concurrency-Safe Atomic Ticket Sequence**: Created `ticket_id_seq` PostgreSQL sequence to eliminate race conditions and duplicate key collisions during concurrent ticket creation.
+- **Input Length Bounds & DoS Prevention**: Enforced strict `.trim()` and `.max()` length constraints across all Zod schemas (preventing multi-megabyte payloads and bcrypt CPU exhaustion).
+- **Rate Limiting Protection**: Added `express-rate-limit` middlewares for authentication (10/15m), public ticket intake (30/15m), AI suggestions (20/15m), and global API requests (300/15m).
+- **LLM Network Timeout Safeguard**: Added `AbortSignal.timeout(8000)` to OpenRouter requests in `aiService` to prevent process threads from hanging indefinitely.
+- **Note-Only Update Reliability**: Fixed ticket update logic so note-only submissions reliably refresh `updated_at` and verify ticket existence.
+- **Keyboard & WCAG Accessibility**: Made ticket table rows and KPI cards fully keyboard-accessible with `tabIndex={0}`, `role="button"`, and `Enter`/`Space` handlers.
+
+---
 
 ## [1.1.1] - 2026-09-24
 

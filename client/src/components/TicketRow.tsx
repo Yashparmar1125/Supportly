@@ -113,8 +113,17 @@ export const TicketRow: React.FC<{ ticket: Ticket }> = ({ ticket }) => {
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label={`View ticket ${ticket.ticket_id}: ${ticket.subject}`}
       onClick={() => navigate(`/tickets/${ticket.ticket_id}`)}
-      className="grid grid-cols-[80px_1fr_auto] sm:grid-cols-[90px_1fr_125px_100px_105px_75px_20px] gap-3 sm:gap-4 items-center px-4 sm:px-6 py-3.5 hover:bg-[#fafbff] cursor-pointer transition-all border-l-2 border-l-transparent hover:border-l-primary group"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          navigate(`/tickets/${ticket.ticket_id}`);
+        }
+      }}
+      className="grid grid-cols-[80px_1fr_auto] sm:grid-cols-[90px_1fr_125px_100px_105px_75px_20px] gap-3 sm:gap-4 items-center px-4 sm:px-6 py-3.5 hover:bg-[#fafbff] focus:bg-[#f4f6ff] focus:outline-none focus:border-l-primary cursor-pointer transition-all border-l-2 border-l-transparent hover:border-l-primary group"
     >
       {/* 1. Ticket ID */}
       <div>
