@@ -1,20 +1,7 @@
 import { pool } from "../db/pool.js";
 import { aiService } from "./ai.service.js";
+import { organizationService } from "./organization.service.js";
 import type { CreateTicketRequest, UpdateTicketRequest, QueryTicketsRequest } from "../schemas/ticket.schema.js";
-
-function inferOrganization(email: string, explicitOrg?: string): string {
-  if (explicitOrg && explicitOrg.trim()) return explicitOrg.trim();
-  const domain = email.split('@')[1]?.toLowerCase();
-  if (!domain) return 'Individual';
-  if (domain.includes('kredx')) return 'KredX';
-  if (domain.includes('quicksend')) return 'QuickSend';
-  if (domain.includes('cashflow')) return 'CashFlow Neo';
-  if (domain.includes('gmail') || domain.includes('yahoo') || domain.includes('outlook') || domain.includes('hotmail')) {
-    return 'Individual';
-  }
-  const namePart = domain.split('.')[0];
-  return namePart.charAt(0).toUpperCase() + namePart.slice(1);
-}
 
 export const ticketService = {
   async create(data: CreateTicketRequest) {
@@ -30,7 +17,7 @@ export const ticketService = {
       sentiment = triage.sentiment;
     }
 
-    const organization = inferOrganization(data.customer_email, data.organization);
+    const organization = organizationService.resolve(data.customer_email, data.organization);
     const channel = data.channel || 'Web Portal';
 
     // 2. Open quick atomic transaction strictly for SQL insert operations (<5ms)
