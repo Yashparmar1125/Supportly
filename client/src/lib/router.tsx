@@ -8,6 +8,7 @@ import { CreateTicketPage } from '../pages/CreateTicketPage';
 import { TicketDetailPage } from '../pages/TicketDetailPage';
 
 import { PublicTicketPage } from '../pages/PublicTicketPage';
+import { ProductPage } from '../pages/ProductPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { ErrorBoundary } from '../components/layout/ErrorBoundary';
 
@@ -16,6 +17,8 @@ export const router = createBrowserRouter([
     errorElement: <ErrorBoundary />,
     children: [
       { path: '/', element: <LandingPage /> },
+      { path: '/platform', element: <ProductPage /> },
+      { path: '/product', element: <ProductPage /> },
       { path: '/login', element: <LoginPage /> },
       { path: '/submit-ticket', element: <PublicTicketPage /> },
       {

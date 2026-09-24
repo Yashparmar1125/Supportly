@@ -11,6 +11,7 @@ import {
   Plus,
   LayoutDashboard,
   Database,
+  Layers,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
 
@@ -51,6 +52,14 @@ export const Navbar: React.FC = () => {
             >
               <Ticket className="w-3.5 h-3.5" />
               <span>Tickets</span>
+            </Link>
+
+            <Link
+              to="/platform"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-ink/65 hover:text-ink hover:bg-canvas transition-all"
+            >
+              <Layers className="w-3.5 h-3.5 text-primary" />
+              <span className="hidden sm:inline">Platform</span>
             </Link>
           </div>
         </div>

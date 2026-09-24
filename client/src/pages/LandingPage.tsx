@@ -22,6 +22,7 @@ export const LandingPage: React.FC = () => {
           <div className="flex items-center gap-8">
             <Logo />
             <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-ink/70">
+              <Link to="/platform" className="hover:text-primary transition-colors">Platform</Link>
               <a href="#features" className="hover:text-primary transition-colors">Features</a>
               <a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a>
             </nav>
